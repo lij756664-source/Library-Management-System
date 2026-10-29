@@ -8,6 +8,7 @@ import com.example.book.mapper.BookMapper;
 import com.example.book.mapper.BorrowMapper;
 import com.example.book.mapper.SystemConfigMapper;
 import com.example.book.service.IBorrowService;
+import com.example.book.service.IReservationService;
 import com.example.book.vo.BookStatVO;
 import com.example.book.vo.CategoryStatVO;
 import com.example.book.vo.DashboardVO;
@@ -28,12 +29,15 @@ public class BorrowServiceImpl implements IBorrowService {
     private final BorrowMapper borrowMapper;
     private final BookMapper bookMapper;
     private final SystemConfigMapper systemConfigMapper;
+    private final IReservationService reservationService;
 
     public BorrowServiceImpl(BorrowMapper borrowMapper, BookMapper bookMapper,
-                             SystemConfigMapper systemConfigMapper) {
+                             SystemConfigMapper systemConfigMapper,
+                             IReservationService reservationService) {
         this.borrowMapper = borrowMapper;
         this.bookMapper = bookMapper;
         this.systemConfigMapper = systemConfigMapper;
+        this.reservationService = reservationService;
     }
 
     @Override
@@ -140,12 +144,12 @@ public class BorrowServiceImpl implements IBorrowService {
         if (borrowMapper.updateReturn(update) <= 0) {
             throw new BusinessException("归还失败");
         }
-        bookMapper.increaseStock(record.getBookId());
+        reservationService.assignReturnedCopy(record.getBookId());
     }
 
     @Override
-    public List<BorrowRecord> myBorrows(Integer userId, String status) {
-        List<BorrowRecord> records = borrowMapper.findByUserId(userId, status);
+    public List<BorrowRecord> myBorrows(Integer userId, String status, String keyword) {
+        List<BorrowRecord> records = borrowMapper.findByUserId(userId, status, keyword);
         records.forEach(this::fillEstimatedFine);
         return records;
     }

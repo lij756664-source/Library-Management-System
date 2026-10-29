@@ -77,6 +77,10 @@
             <if test="status != null and status != ''">
                 AND br.status = #{status}
             </if>
+            <if test="keyword != null and keyword != ''">
+                AND (b.title LIKE CONCAT('%', #{keyword}, '%')
+                OR b.author LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
         </where>
         ORDER BY br.borrow_time DESC
     </select>

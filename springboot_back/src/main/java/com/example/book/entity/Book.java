@@ -19,4 +19,9 @@ public class Book {
     private String description;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
+
+    /** 当前排队预约人数（WAITING + READY） */
+    private Integer waitingCount;
+    /** 当前用户对该书的预约状态 */
+    private String myReserveStatus;
 }

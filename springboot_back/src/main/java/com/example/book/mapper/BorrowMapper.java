@@ -24,7 +24,9 @@ public interface BorrowMapper {
 
     int updateReturn(BorrowRecord record);
 
-    List<BorrowRecord> findByUserId(@Param("userId") Integer userId, @Param("status") String status);
+    List<BorrowRecord> findByUserId(@Param("userId") Integer userId,
+                                   @Param("status") String status,
+                                   @Param("keyword") String keyword);
 
     List<BorrowRecord> findAllWithDetail(@Param("keyword") String keyword, @Param("status") String status);
 

@@ -75,8 +75,12 @@
               <span class="demo-account">admin / 123456</span>
             </button>
             <button type="button" class="demo-btn" @click="fillAccount('user', '123456')">
-              <span class="demo-role">普通用户</span>
+              <span class="demo-role">读者甲</span>
               <span class="demo-account">user / 123456</span>
+            </button>
+            <button type="button" class="demo-btn" @click="fillAccount('user2', '123456')">
+              <span class="demo-role">读者乙</span>
+              <span class="demo-account">user2 / 123456</span>
             </button>
           </div>
         </div>
@@ -358,6 +362,7 @@ const handleLogin = async () => {
 
 .demo-btns {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 

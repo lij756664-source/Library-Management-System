@@ -8,6 +8,8 @@ import MyBorrows from '../views/MyBorrows.vue'
 import BookList from '../views/BookList.vue'
 import CategoryList from '../views/CategoryList.vue'
 import BorrowManage from '../views/BorrowManage.vue'
+import MyReservations from '../views/MyReservations.vue'
+import ReservationManage from '../views/ReservationManage.vue'
 import Statistics from '../views/Statistics.vue'
 
 const routes = [
@@ -19,9 +21,11 @@ const routes = [
     children: [
       { path: 'browse', name: 'BookBrowse', component: BookBrowse, meta: { title: '图书查询', roles: ['ADMIN', 'USER'] } },
       { path: 'my-borrows', name: 'MyBorrows', component: MyBorrows, meta: { title: '我的借阅', roles: ['ADMIN', 'USER'] } },
+      { path: 'my-reservations', name: 'MyReservations', component: MyReservations, meta: { title: '我的预约', roles: ['ADMIN', 'USER'] } },
       { path: 'books', name: 'BookList', component: BookList, meta: { title: '图书管理', roles: ['ADMIN'] } },
       { path: 'categories', name: 'CategoryList', component: CategoryList, meta: { title: '分类管理', roles: ['ADMIN'] } },
       { path: 'borrow-manage', name: 'BorrowManage', component: BorrowManage, meta: { title: '借阅管理', roles: ['ADMIN'] } },
+      { path: 'reservation-manage', name: 'ReservationManage', component: ReservationManage, meta: { title: '预约管理', roles: ['ADMIN'] } },
       { path: 'statistics', name: 'Statistics', component: Statistics, meta: { title: '数据统计', roles: ['ADMIN'] } }
     ]
   }

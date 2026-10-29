@@ -4,6 +4,7 @@ import com.example.book.annotation.RequireRole;
 import com.example.book.common.Result;
 import com.example.book.entity.Book;
 import com.example.book.service.IBookService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +22,11 @@ public class BookController {
 
     @GetMapping
     public Result<List<Book>> list(
+            HttpServletRequest request,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Integer categoryId) {
-        return Result.success(bookService.list(keyword, categoryId));
+        Integer userId = (Integer) request.getAttribute("userId");
+        return Result.success(bookService.list(keyword, categoryId, userId));
     }
 
     @GetMapping("/{id}")

@@ -50,9 +50,10 @@ public class BorrowController {
     @GetMapping("/my")
     public Result<List<BorrowRecord>> myBorrows(
             HttpServletRequest request,
-            @RequestParam(required = false) String status) {
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword) {
         Integer userId = (Integer) request.getAttribute("userId");
-        return Result.success(borrowService.myBorrows(userId, status));
+        return Result.success(borrowService.myBorrows(userId, status, keyword));
     }
 
     @GetMapping

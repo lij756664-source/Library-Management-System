@@ -10,6 +10,7 @@ com\example\book\vo\BookStatVO.class
 com\example\book\config\WebMvcConfig.class
 com\example\book\service\IUserService.class
 com\example\book\mapper\CategoryMapper.class
+com\example\book\controller\ReservationController.class
 com\example\book\controller\StatisticsController.class
 com\example\book\service\impl\UserServiceImpl.class
 com\example\book\controller\CategoryController.class
@@ -20,6 +21,7 @@ com\example\book\entity\SystemConfig.class
 com\example\book\entity\Book.class
 com\example\book\mapper\BookMapper.class
 com\example\book\service\IBookService.class
+com\example\book\service\impl\ReservationServiceImpl.class
 com\example\book\common\BusinessException.class
 com\example\book\mapper\BorrowMapper.class
 com\example\book\service\ICategoryService.class
@@ -27,10 +29,13 @@ com\example\book\common\Result.class
 com\example\book\entity\BorrowRecord.class
 com\example\book\exception\GlobalExceptionHandler.class
 com\example\book\BookApplication.class
+com\example\book\mapper\ReservationMapper.class
+com\example\book\service\IReservationService.class
 com\example\book\vo\CategoryStatVO.class
 com\example\book\controller\BookController.class
 com\example\book\mapper\UserMapper.class
 com\example\book\config\JwtProperties.class
+com\example\book\entity\Reservation.class
 com\example\book\controller\AuthController.class
 com\example\book\service\impl\CategoryServiceImpl.class
 com\example\book\interceptor\JwtInterceptor.class

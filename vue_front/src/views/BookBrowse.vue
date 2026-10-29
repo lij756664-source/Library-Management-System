@@ -28,10 +28,19 @@
           <el-tag :type="row.stock > 0 ? 'success' : 'danger'" size="small">{{ row.stock }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="description" label="简介" min-width="200" show-overflow-tooltip />
-      <el-table-column label="操作" width="120" align="center" fixed="right">
+      <el-table-column label="预约排队" width="100" align="center">
         <template #default="{ row }">
-          <el-button type="primary" link :disabled="row.stock <= 0" @click="handleBorrow(row)">借阅</el-button>
+          <span v-if="row.waitingCount > 0">{{ row.waitingCount }} 人</span>
+          <span v-else class="text-muted">-</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="description" label="简介" min-width="180" show-overflow-tooltip />
+      <el-table-column label="操作" width="150" align="center" fixed="right">
+        <template #default="{ row }">
+          <el-button v-if="row.stock > 0" type="primary" link @click="handleBorrow(row)">借阅</el-button>
+          <el-button v-else-if="row.myReserveStatus === 'READY'" type="warning" link disabled>待取书</el-button>
+          <el-button v-else-if="row.myReserveStatus === 'WAITING'" type="info" link disabled>已预约</el-button>
+          <el-button v-else type="warning" link @click="handleReserve(row)">预约</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -45,6 +54,7 @@ import { Search, Refresh } from '@element-plus/icons-vue'
 import { getBooks } from '../api/book'
 import { getCategories } from '../api/category'
 import { borrowBook, getBorrowRules } from '../api/borrow'
+import { reserveBook } from '../api/reservation'
 
 const loading = ref(false)
 const books = ref([])
@@ -97,6 +107,16 @@ const handleBorrow = (row) => {
     .catch(() => {})
 }
 
+const handleReserve = (row) => {
+  ElMessageBox.confirm(`《${row.title}》暂无库存，确定加入预约队列吗？`, '预约确认', { type: 'info' })
+    .then(async () => {
+      await reserveBook(row.id)
+      ElMessage.success('预约成功，已加入排队')
+      loadBooks()
+    })
+    .catch(() => {})
+}
+
 onMounted(() => {
   loadBooks()
   loadCategories()
@@ -107,4 +127,5 @@ onMounted(() => {
 <style scoped>
 .search-form { margin-bottom: 16px; }
 .rules-alert { margin-bottom: 16px; }
+.text-muted { color: var(--color-text-muted); }
 </style>

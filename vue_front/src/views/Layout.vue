@@ -55,9 +55,11 @@ const authStore = useAuthStore()
 const allMenus = [
   { path: '/browse', title: '图书查询', icon: 'Search', roles: ['ADMIN', 'USER'] },
   { path: '/my-borrows', title: '我的借阅', icon: 'Notebook', roles: ['ADMIN', 'USER'] },
+  { path: '/my-reservations', title: '我的预约', icon: 'Ticket', roles: ['ADMIN', 'USER'] },
   { path: '/books', title: '图书管理', icon: 'Collection', roles: ['ADMIN'] },
   { path: '/categories', title: '分类管理', icon: 'Menu', roles: ['ADMIN'] },
   { path: '/borrow-manage', title: '借阅管理', icon: 'List', roles: ['ADMIN'] },
+  { path: '/reservation-manage', title: '预约管理', icon: 'Finished', roles: ['ADMIN'] },
   { path: '/statistics', title: '数据统计', icon: 'DataAnalysis', roles: ['ADMIN'] }
 ]
 

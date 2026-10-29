@@ -16,7 +16,7 @@ public interface IBorrowService {
 
     void returnBook(Integer userId, Integer borrowId, boolean isAdmin);
 
-    List<BorrowRecord> myBorrows(Integer userId, String status);
+    List<BorrowRecord> myBorrows(Integer userId, String status, String keyword);
 
     List<BorrowRecord> allBorrows(String keyword, String status);
 

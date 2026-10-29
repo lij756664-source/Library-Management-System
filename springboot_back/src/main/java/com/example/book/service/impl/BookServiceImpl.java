@@ -5,6 +5,7 @@ import com.example.book.entity.Book;
 import com.example.book.mapper.BookMapper;
 import com.example.book.mapper.BorrowMapper;
 import com.example.book.mapper.CategoryMapper;
+import com.example.book.mapper.ReservationMapper;
 import com.example.book.service.IBookService;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +17,19 @@ public class BookServiceImpl implements IBookService {
     private final BookMapper bookMapper;
     private final CategoryMapper categoryMapper;
     private final BorrowMapper borrowMapper;
+    private final ReservationMapper reservationMapper;
 
-    public BookServiceImpl(BookMapper bookMapper, CategoryMapper categoryMapper, BorrowMapper borrowMapper) {
+    public BookServiceImpl(BookMapper bookMapper, CategoryMapper categoryMapper,
+                           BorrowMapper borrowMapper, ReservationMapper reservationMapper) {
         this.bookMapper = bookMapper;
         this.categoryMapper = categoryMapper;
         this.borrowMapper = borrowMapper;
+        this.reservationMapper = reservationMapper;
     }
 
     @Override
-    public List<Book> list(String keyword, Integer categoryId) {
-        return bookMapper.findAll(keyword, categoryId);
+    public List<Book> list(String keyword, Integer categoryId, Integer userId) {
+        return bookMapper.findAll(keyword, categoryId, userId);
     }
 
     @Override
@@ -69,6 +73,9 @@ public class BookServiceImpl implements IBookService {
         }
         if (borrowMapper.countByBookId(id) > 0) {
             throw new BusinessException(400, "该图书存在借阅记录，无法删除");
+        }
+        if (reservationMapper.countActiveByBookId(id) > 0) {
+            throw new BusinessException(400, "该图书存在预约排队，无法删除");
         }
         if (bookMapper.deleteById(id) <= 0) {
             throw new BusinessException("删除图书失败");

@@ -9,6 +9,7 @@ CREATE DATABASE IF NOT EXISTS book_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8
 USE book_db;
 
 -- 删除表（按外键依赖顺序）
+DROP TABLE IF EXISTS `reservation`;
 DROP TABLE IF EXISTS `borrow_record`;
 DROP TABLE IF EXISTS `book`;
 DROP TABLE IF EXISTS `category`;
@@ -75,7 +76,24 @@ CREATE TABLE `borrow_record` (
     CONSTRAINT `fk_borrow_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='借阅记录表';
 
--- 5. 系统配置表
+-- 5. 预约排队表
+CREATE TABLE `reservation` (
+    `id` INT NOT NULL AUTO_INCREMENT COMMENT '预约ID',
+    `user_id` INT NOT NULL COMMENT '预约用户ID',
+    `book_id` INT NOT NULL COMMENT '图书ID',
+    `status` VARCHAR(20) NOT NULL DEFAULT 'WAITING' COMMENT 'WAITING-排队中 READY-待取书 FULFILLED-已取书 CANCELLED-已取消 EXPIRED-已过期',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '预约时间',
+    `expire_time` DATETIME DEFAULT NULL COMMENT '待取书截止时间',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_res_user_id` (`user_id`),
+    KEY `idx_res_book_id` (`book_id`),
+    KEY `idx_res_status` (`status`),
+    CONSTRAINT `fk_res_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+    CONSTRAINT `fk_res_book` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='图书预约表';
+
+-- 6. 系统配置表
 CREATE TABLE `system_config` (
     `id` INT NOT NULL AUTO_INCREMENT COMMENT '配置ID',
     `config_key` VARCHAR(50) NOT NULL COMMENT '配置键',
@@ -88,7 +106,8 @@ CREATE TABLE `system_config` (
 -- 初始用户（密码明文，仅演示）
 INSERT INTO `user` (`username`, `password`, `nickname`, `role`) VALUES
 ('admin', '123456', '管理员', 'ADMIN'),
-('user', '123456', '普通用户', 'USER');
+('user', '123456', '读者甲', 'USER'),
+('user2', '123456', '读者乙', 'USER');
 
 -- 初始分类
 INSERT INTO `category` (`name`, `description`) VALUES
@@ -115,7 +134,9 @@ INSERT INTO `system_config` (`config_key`, `config_value`, `description`) VALUES
 ('renew_days', '14', '每次续借延长天数'),
 ('max_renew_count', '2', '最大续借次数'),
 ('fine_per_day', '0.5', '逾期每天罚款（元）'),
-('max_borrow_count', '5', '每人最多同时借阅册数');
+('max_borrow_count', '5', '每人最多同时借阅册数'),
+('max_reservation_count', '3', '每人最多同时预约本数'),
+('pickup_days', '3', '预约到书后取书期限（天）');
 
 -- 示例借阅记录（便于演示统计）
 INSERT INTO `borrow_record` (`user_id`, `book_id`, `borrow_time`, `due_time`, `status`, `renew_count`) VALUES

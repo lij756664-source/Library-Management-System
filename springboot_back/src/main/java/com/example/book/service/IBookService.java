@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IBookService {
 
-    List<Book> list(String keyword, Integer categoryId);
+    List<Book> list(String keyword, Integer categoryId, Integer userId);
 
     Book getById(Integer id);
 

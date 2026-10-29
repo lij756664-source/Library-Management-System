@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface BookMapper {
 
-    List<Book> findAll(@Param("keyword") String keyword, @Param("categoryId") Integer categoryId);
+    List<Book> findAll(@Param("keyword") String keyword,
+                       @Param("categoryId") Integer categoryId,
+                       @Param("userId") Integer userId);
 
     Book findById(@Param("id") Integer id);
 
