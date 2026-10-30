@@ -3,10 +3,94 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.book.mapper.UserMapper">
 
+    <!-- 按用户名查询（含密码，仅内部校验使用，禁止对外返回） -->
     <select id="findByUsername" resultType="com.example.book.entity.User">
-        SELECT id, username, password, nickname, role, create_time
-        FROM user
+        SELECT id, username, password, nickname, email, phone, avatar, role, status, create_time, update_time
+        FROM `user`
         WHERE username = #{username}
+    </select>
+
+    <!-- 按ID查询（含密码，仅内部校验使用，禁止对外返回） -->
+    <select id="findById" resultType="com.example.book.entity.User">
+        SELECT id, username, password, nickname, email, phone, avatar, role, status, create_time, update_time
+        FROM `user`
+        WHERE id = #{id}
+    </select>
+
+    <!-- 新增用户，回填自增主键 -->
+    <insert id="insert" parameterType="com.example.book.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user` (username, password, nickname, email, phone, role, status)
+        VALUES (#{username}, #{password}, #{nickname}, #{email}, #{phone}, #{role}, #{status})
+    </insert>
+
+    <!-- 修改个人信息（昵称/邮箱/手机号） -->
+    <update id="updateProfile">
+        UPDATE `user`
+        SET nickname    = #{nickname},
+            email       = #{email},
+            phone       = #{phone},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 修改密码 -->
+    <update id="updatePassword">
+        UPDATE `user`
+        SET password    = #{password},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新头像地址 -->
+    <update id="updateAvatar">
+        UPDATE `user`
+        SET avatar      = #{avatar},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 启用/停用账号 -->
+    <update id="updateStatus">
+        UPDATE `user`
+        SET status      = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 分页查询账号列表（不查密码） -->
+    <select id="selectPage" resultType="com.example.book.entity.User">
+        SELECT id, username, nickname, email, phone, avatar, role, status, create_time, update_time
+        FROM `user`
+        <where>
+            <if test="username != null and username != ''">
+                AND (username LIKE CONCAT('%', #{username}, '%') OR nickname LIKE CONCAT('%', #{username}, '%'))
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="role != null and role != ''">
+                AND role = #{role}
+            </if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 分页查询总数 -->
+    <select id="countPage" resultType="int">
+        SELECT COUNT(*)
+        FROM `user`
+        <where>
+            <if test="username != null and username != ''">
+                AND (username LIKE CONCAT('%', #{username}, '%') OR nickname LIKE CONCAT('%', #{username}, '%'))
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="role != null and role != ''">
+                AND role = #{role}
+            </if>
+        </where>
     </select>
 
 </mapper>

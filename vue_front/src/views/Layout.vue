@@ -30,6 +30,15 @@
           <span class="role-badge" :class="authStore.isAdmin ? 'role-admin' : 'role-user'">
             {{ authStore.isAdmin ? '管理员' : '普通用户' }}
           </span>
+          <el-avatar
+            :size="30"
+            :src="authStore.user?.avatar || ''"
+            class="header-avatar"
+            title="个人中心"
+            @click="router.push('/profile')"
+          >
+            <el-icon><UserFilled /></el-icon>
+          </el-avatar>
           <span class="user-name">{{ authStore.nickname }}</span>
           <button class="logout-btn" @click="handleLogout">退出</button>
         </div>
@@ -56,8 +65,10 @@ const allMenus = [
   { path: '/browse', title: '图书查询', icon: 'Search', roles: ['ADMIN', 'USER'] },
   { path: '/my-borrows', title: '我的借阅', icon: 'Notebook', roles: ['ADMIN', 'USER'] },
   { path: '/my-reservations', title: '我的预约', icon: 'Ticket', roles: ['ADMIN', 'USER'] },
+  { path: '/profile', title: '个人中心', icon: 'User', roles: ['ADMIN', 'USER'] },
   { path: '/books', title: '图书管理', icon: 'Collection', roles: ['ADMIN'] },
   { path: '/categories', title: '分类管理', icon: 'Menu', roles: ['ADMIN'] },
+  { path: '/admin-users', title: '用户管理', icon: 'UserFilled', roles: ['ADMIN'] },
   { path: '/borrow-manage', title: '借阅管理', icon: 'List', roles: ['ADMIN'] },
   { path: '/reservation-manage', title: '预约管理', icon: 'Finished', roles: ['ADMIN'] },
   { path: '/statistics', title: '数据统计', icon: 'DataAnalysis', roles: ['ADMIN'] }
@@ -207,6 +218,18 @@ const handleLogout = () => {
 .user-name {
   font-size: 14px;
   color: var(--color-text-secondary);
+}
+
+.header-avatar {
+  background: var(--color-primary-light);
+  color: var(--color-primary-hover);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.header-avatar:hover {
+  transform: scale(1.08);
 }
 
 .logout-btn {

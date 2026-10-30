@@ -103,11 +103,11 @@ CREATE TABLE `system_config` (
     UNIQUE KEY `uk_config_key` (`config_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统配置表';
 
--- 初始用户（密码明文，仅演示）
+-- 初始用户（密码均为 123456，BCrypt 加密存储，禁止明文）
 INSERT INTO `user` (`username`, `password`, `nickname`, `role`) VALUES
-('admin', '123456', '管理员', 'ADMIN'),
-('user', '123456', '读者甲', 'USER'),
-('user2', '123456', '读者乙', 'USER');
+('admin', '$2b$10$sAO0f0onq4ER9jNvxPl15ejsgry7mvMlscmxpdMGRTWPr59w3sq0u', '管理员', 'ADMIN'),
+('user', '$2b$10$sAO0f0onq4ER9jNvxPl15ejsgry7mvMlscmxpdMGRTWPr59w3sq0u', '读者甲', 'USER'),
+('user2', '$2b$10$sAO0f0onq4ER9jNvxPl15ejsgry7mvMlscmxpdMGRTWPr59w3sq0u', '读者乙', 'USER');
 
 -- 初始分类
 INSERT INTO `category` (`name`, `description`) VALUES

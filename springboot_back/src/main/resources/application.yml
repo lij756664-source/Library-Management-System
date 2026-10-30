@@ -6,7 +6,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/book_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
-    password: 123456
+    password: 182abc159
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+
+# 头像等上传文件保存目录（相对应用工作目录）
+app:
+  upload-dir: ./uploads/avatars
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

@@ -57,9 +57,16 @@
             <version>0.12.5</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- BCrypt 密码加密（仅引入加密库，不引入完整 Spring Security 框架） -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <!-- 显式指定 1.18.38：父版本管理的 1.18.32 在 JDK 24 的 javac 下无法工作 -->
+            <version>1.18.38</version>
             <optional>true</optional>
         </dependency>
         <dependency>

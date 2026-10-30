@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.book.mapper.OperationLogMapper">
+
+    <insert id="insert" parameterType="com.example.book.entity.OperationLog">
+        INSERT INTO operation_log (user_id, username, operation, detail, ip)
+        VALUES (#{userId}, #{username}, #{operation}, #{detail}, #{ip})
+    </insert>
+
+    <select id="selectPage" resultType="com.example.book.entity.OperationLog">
+        SELECT id, user_id, username, operation, detail, ip, create_time
+        FROM operation_log
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="operation != null and operation != ''">
+                AND operation = #{operation}
+            </if>
+        </where>
+        ORDER BY id DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countPage" resultType="int">
+        SELECT COUNT(*)
+        FROM operation_log
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="operation != null and operation != ''">
+                AND operation = #{operation}
+            </if>
+        </where>
+    </select>
+
+</mapper>

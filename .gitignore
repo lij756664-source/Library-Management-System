@@ -22,3 +22,16 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# 前端依赖与构建产物
+vue_front/node_modules/
+vue_front/dist/
+
+# IDE 配置文件
+springboot_back/.classpath
+springboot_back/.project
+springboot_back/.settings/
+springboot_back/.vscode/
+
+# 头像上传目录（运行时生成）
+springboot_back/uploads/

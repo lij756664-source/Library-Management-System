@@ -84,6 +84,11 @@
             </button>
           </div>
         </div>
+
+        <div class="register-link">
+          没有账号？
+          <router-link to="/register" class="link">立即注册</router-link>
+        </div>
       </div>
 
       <p class="copyright">Vue 3 + Spring Boot · 前后端分离架构</p>
@@ -92,14 +97,15 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
 import { login } from '../api/auth'
 import { useAuthStore } from '../store/auth'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const formRef = ref(null)
 const loading = ref(false)
@@ -138,6 +144,13 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
+
+// 注册成功后跳转回来时自动填入用户名
+onMounted(() => {
+  if (route.query.username) {
+    form.username = route.query.username
+  }
+})
 </script>
 
 <style scoped>
@@ -396,6 +409,25 @@ const handleLogin = async () => {
   font-size: 11px;
   font-weight: 400;
   color: #a8b8c4;
+}
+
+/* 注册入口 */
+.register-link {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 400;
+  color: #a8b8c4;
+}
+
+.link {
+  color: #7eb8da;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  color: #6aabce;
 }
 
 .copyright {
