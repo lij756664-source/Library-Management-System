@@ -5,7 +5,7 @@
 
     <select id="findAll" resultType="com.example.book.entity.Book">
         SELECT b.id, b.title, b.author, b.isbn, b.category_id AS categoryId,
-               c.name AS categoryName, b.price, b.stock, b.description,
+               c.name AS categoryName, b.price, b.stock, b.location, b.description,
                b.create_time AS createTime, b.update_time AS updateTime,
                (SELECT COUNT(*) FROM reservation r
                 WHERE r.book_id = b.id AND r.status IN ('WAITING', 'READY')) AS waitingCount
@@ -26,13 +26,17 @@
             <if test="categoryId != null">
                 AND b.category_id = #{categoryId}
             </if>
+            <!-- 高级检索：仅显示当前有可借库存的图书 -->
+            <if test="availableOnly != null and availableOnly">
+                AND b.stock &gt; 0
+            </if>
         </where>
         ORDER BY b.create_time DESC
     </select>
 
     <select id="findById" resultType="com.example.book.entity.Book">
         SELECT b.id, b.title, b.author, b.isbn, b.category_id AS categoryId,
-               c.name AS categoryName, b.price, b.stock, b.description,
+               c.name AS categoryName, b.price, b.stock, b.location, b.description,
                b.create_time AS createTime, b.update_time AS updateTime
         FROM book b
         LEFT JOIN category c ON b.category_id = c.id
@@ -40,8 +44,8 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO book (title, author, isbn, category_id, price, stock, description, create_time, update_time)
-        VALUES (#{title}, #{author}, #{isbn}, #{categoryId}, #{price}, #{stock}, #{description}, NOW(), NOW())
+        INSERT INTO book (title, author, isbn, category_id, price, stock, location, description, create_time, update_time)
+        VALUES (#{title}, #{author}, #{isbn}, #{categoryId}, #{price}, #{stock}, #{location}, #{description}, NOW(), NOW())
     </insert>
 
     <update id="update">
@@ -52,6 +56,7 @@
             category_id = #{categoryId},
             price = #{price},
             stock = #{stock},
+            location = #{location},
             description = #{description},
             update_time = NOW()
         WHERE id = #{id}
@@ -69,6 +74,19 @@
     <update id="increaseStock">
         UPDATE book SET stock = stock + 1, update_time = NOW()
         WHERE id = #{id}
+    </update>
+
+    <select id="countByIsbn" resultType="int">
+        SELECT COUNT(*) FROM book
+        WHERE isbn = #{isbn}
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <update id="adjustStock">
+        UPDATE book SET stock = stock + #{delta}, update_time = NOW()
+        WHERE id = #{id} AND stock + #{delta} >= 0
     </update>
 
 </mapper>

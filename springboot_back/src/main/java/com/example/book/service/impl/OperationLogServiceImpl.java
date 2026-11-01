@@ -5,6 +5,8 @@ import com.example.book.entity.OperationLog;
 import com.example.book.mapper.OperationLogMapper;
 import com.example.book.service.IOperationLogService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -18,21 +20,43 @@ import java.util.List;
 @Service
 public class OperationLogServiceImpl implements IOperationLogService {
 
+    private static final Logger log = LoggerFactory.getLogger(OperationLogServiceImpl.class);
+    /** 日志字段长度上限（与数据库字段保持一致），超长内容截断，避免审计写入失败 */
+    private static final int MAX_OPERATION_LENGTH = 50;
+    private static final int MAX_DETAIL_LENGTH = 500;
+
     private final OperationLogMapper operationLogMapper;
 
     public OperationLogServiceImpl(OperationLogMapper operationLogMapper) {
         this.operationLogMapper = operationLogMapper;
     }
 
+    /**
+     * 记录操作日志
+     * <p>审计日志属于旁路能力：写入失败（如日志表异常）时只记录服务端错误日志，
+     * 不向调用方抛出异常，避免因为写日志失败而让已完成的主业务操作返回失败给用户。</p>
+     */
     @Override
     public void record(Integer userId, String username, String operation, String detail) {
-        OperationLog log = new OperationLog();
-        log.setUserId(userId);
-        log.setUsername(username);
-        log.setOperation(operation);
-        log.setDetail(detail);
-        log.setIp(getClientIp());
-        operationLogMapper.insert(log);
+        try {
+            OperationLog entity = new OperationLog();
+            entity.setUserId(userId);
+            entity.setUsername(username);
+            entity.setOperation(truncate(operation, MAX_OPERATION_LENGTH));
+            entity.setDetail(truncate(detail, MAX_DETAIL_LENGTH));
+            entity.setIp(getClientIp());
+            operationLogMapper.insert(entity);
+        } catch (Exception e) {
+            log.error("操作日志写入失败，operation={}，username={}，detail={}", operation, username, detail, e);
+        }
+    }
+
+    /** 超长内容截断，保证日志写入不会因字段长度溢出失败 */
+    private String truncate(String value, int maxLength) {
+        if (value == null) {
+            return null;
+        }
+        return value.length() <= maxLength ? value : value.substring(0, maxLength);
     }
 
     @Override
