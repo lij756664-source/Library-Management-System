@@ -1,0 +1,15 @@
+[
+  {
+    "at": "2026-11-01T13:04:01.575Z",
+    "setMode": "commit-query-fail"
+  },
+  {
+    "at": "2026-11-01T13:04:16.622Z",
+    "action": "backend-completed-response-withheld",
+    "code": 200
+  },
+  {
+    "at": "2026-11-01T13:04:26.593Z",
+    "action": "verification-query-failed"
+  }
+]

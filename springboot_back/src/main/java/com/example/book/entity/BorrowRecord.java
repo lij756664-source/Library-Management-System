@@ -16,6 +16,10 @@ public class BorrowRecord {
     private LocalDateTime returnTime;
     private String status;
     private Integer renewCount;
+    private Integer borrowDaysSnapshot;
+    private Integer maxRenewCountSnapshot;
+    private Integer renewDaysSnapshot;
+    private BigDecimal finePerDaySnapshot;
     private Integer overdueDays;
     private BigDecimal fineAmount;
 

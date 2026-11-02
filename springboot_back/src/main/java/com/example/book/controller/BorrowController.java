@@ -64,6 +64,7 @@ public class BorrowController {
         return Result.success(borrowService.allBorrows(keyword, status));
     }
 
+    @RequireRole("ADMIN")
     @GetMapping("/rules")
     public Result<Map<String, String>> rules() {
         return Result.success(borrowService.getBorrowRules());

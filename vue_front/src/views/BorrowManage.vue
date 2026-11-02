@@ -28,8 +28,8 @@
       <el-table-column label="借阅时间" width="170">
         <template #default="{ row }">{{ formatDateTime(row.borrowTime) }}</template>
       </el-table-column>
-      <el-table-column label="应还时间" width="170">
-        <template #default="{ row }">{{ formatDateTime(row.dueTime) }}</template>
+      <el-table-column label="应还日期（北京）" width="170">
+        <template #default="{ row }">{{ String(row.dueTime).slice(0,10) }}</template>
       </el-table-column>
       <el-table-column label="剩余/逾期" width="120" align="center">
         <template #default="{ row }">
@@ -40,14 +40,17 @@
         </template>
       </el-table-column>
       <el-table-column prop="renewCount" label="续借" width="70" align="center" />
-      <el-table-column label="罚款(元)" width="100" align="right">
+      <el-table-column label="罚金(元)" width="100" align="right">
         <template #default="{ row }">
           <span :class="{ 'text-danger': row.overdue }">
             {{ calcDisplayFine(row, finePerDay).toFixed(2) }}
           </span>
-          <span v-if="isEstimatedFine(row)" class="fine-hint">预估</span>
         </template>
       </el-table-column>
+      <el-table-column prop="overdueDays" label="逾期天数" width="100" />
+      <el-table-column label="日费(元)" width="100"><template #default="{ row }">{{ Number(row.finePerDaySnapshot).toFixed(2) }}</template></el-table-column>
+      <el-table-column label="金额性质" width="100"><template #default="{ row }"><el-tooltip :content="row.status === 'RETURNED' ? '按实际归还日期核算，不表示已缴费' : '按北京时间当天暂计，归还时核算最终金额'"><el-tag :type="row.status === 'RETURNED' ? 'success' : 'info'" size="small">{{ row.status === 'RETURNED' ? '最终' : '暂计' }}</el-tag></el-tooltip></template></el-table-column>
+      <el-table-column label="实际归还时间" width="170"><template #default="{ row }">{{ row.returnTime ? formatDateTime(row.returnTime) : '尚未归还' }}</template></el-table-column>
       <el-table-column label="操作" width="100" align="center" fixed="right">
         <template #default="{ row }">
           <el-button v-if="row.status === 'BORROWING'" type="success" link @click="handleReturn(row)">代还</el-button>
@@ -61,10 +64,10 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh } from '@element-plus/icons-vue'
-import { getAllBorrows, returnBook, getBorrowRules } from '../api/borrow'
+import { getAllBorrows, returnBook } from '../api/borrow'
 import BorrowStatusTag from '../components/BorrowStatusTag.vue'
 import { formatDateTime, getRemainText } from '../utils/date'
-import { calcDisplayFine, isEstimatedFine } from '../utils/fine'
+import { calcDisplayFine } from '../utils/fine'
 
 const loading = ref(false)
 const records = ref([])
@@ -90,15 +93,8 @@ const handleReturn = (row) => {
     .catch(() => {})
 }
 
-onMounted(async () => {
-  try {
-    const rulesRes = await getBorrowRules()
-    if (rulesRes.data?.fine_per_day) {
-      finePerDay.value = Number(rulesRes.data.fine_per_day)
-    }
-  } catch (_) { /* 使用默认 0.5 */ }
-  loadData()
-})
+onMounted(loadData)
+
 </script>
 
 <style scoped>

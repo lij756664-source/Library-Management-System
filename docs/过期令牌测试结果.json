@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/rules",
+    "code": 401,
+    "hasData": false,
+    "passed": true
+  },
+  {
+    "path": "/statistics/overview",
+    "code": 401,
+    "hasData": false,
+    "passed": true
+  },
+  {
+    "path": "/borrows/my",
+    "code": 401,
+    "hasData": false,
+    "passed": true
+  }
+]

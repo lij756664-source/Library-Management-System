@@ -26,6 +26,8 @@ import java.util.Map;
 @Service
 public class BorrowServiceImpl implements IBorrowService {
 
+    private final com.example.book.service.RuleService ruleService;
+    private final com.example.book.service.FineService fineService;
     private final BorrowMapper borrowMapper;
     private final BookMapper bookMapper;
     private final SystemConfigMapper systemConfigMapper;
@@ -33,7 +35,8 @@ public class BorrowServiceImpl implements IBorrowService {
 
     public BorrowServiceImpl(BorrowMapper borrowMapper, BookMapper bookMapper,
                              SystemConfigMapper systemConfigMapper,
-                             IReservationService reservationService) {
+                             IReservationService reservationService, com.example.book.service.RuleService ruleService, com.example.book.service.FineService fineService) {
+        this.ruleService=ruleService; this.fineService=fineService;
         this.borrowMapper = borrowMapper;
         this.bookMapper = bookMapper;
         this.systemConfigMapper = systemConfigMapper;
@@ -43,6 +46,7 @@ public class BorrowServiceImpl implements IBorrowService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void borrowBook(Integer userId, Integer bookId) {
+        ruleService.lock();
         Book book = bookMapper.findById(bookId);
         if (book == null) {
             throw new BusinessException(404, "图书不存在");
@@ -61,7 +65,7 @@ public class BorrowServiceImpl implements IBorrowService {
         }
 
         int borrowDays = getIntConfig("borrow_days", 30);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
 
         BorrowRecord record = new BorrowRecord();
         record.setUserId(userId);
@@ -70,6 +74,7 @@ public class BorrowServiceImpl implements IBorrowService {
         record.setDueTime(now.plusDays(borrowDays));
         record.setStatus("BORROWING");
         record.setRenewCount(0);
+        ruleService.snapshot(record, ruleService.current());
 
         if (borrowMapper.insert(record) <= 0) {
             throw new BusinessException("创建借阅记录失败");
@@ -82,6 +87,7 @@ public class BorrowServiceImpl implements IBorrowService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void renewBook(Integer userId, Integer borrowId) {
+        ruleService.lock();
         BorrowRecord record = borrowMapper.findById(borrowId);
         if (record == null) {
             throw new BusinessException(404, "借阅记录不存在");
@@ -96,12 +102,12 @@ public class BorrowServiceImpl implements IBorrowService {
             throw new BusinessException(400, "图书已逾期，请先归还后再借阅");
         }
 
-        int maxRenew = getIntConfig("max_renew_count", 2);
+        int maxRenew = record.getMaxRenewCountSnapshot();
         if (record.getRenewCount() >= maxRenew) {
             throw new BusinessException(400, "已达最大续借次数（" + maxRenew + "次）");
         }
 
-        int renewDays = getIntConfig("renew_days", 14);
+        int renewDays = record.getRenewDaysSnapshot();
         LocalDateTime newDueTime = record.getDueTime().plusDays(renewDays);
         if (borrowMapper.updateRenew(borrowId, newDueTime) <= 0) {
             throw new BusinessException("续借失败");
@@ -111,6 +117,7 @@ public class BorrowServiceImpl implements IBorrowService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void returnBook(Integer userId, Integer borrowId, boolean isAdmin) {
+        ruleService.lock();
         BorrowRecord record = borrowMapper.findById(borrowId);
         if (record == null) {
             throw new BusinessException(404, "借阅记录不存在");
@@ -122,18 +129,10 @@ public class BorrowServiceImpl implements IBorrowService {
             throw new BusinessException(400, "该图书已归还");
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        int overdueDays = 0;
-        BigDecimal fineAmount = BigDecimal.ZERO;
-
-        if (now.isAfter(record.getDueTime())) {
-            overdueDays = (int) ChronoUnit.DAYS.between(record.getDueTime().toLocalDate(), now.toLocalDate());
-            if (overdueDays < 1) {
-                overdueDays = 1;
-            }
-            BigDecimal finePerDay = getDecimalConfig("fine_per_day", new BigDecimal("0.5"));
-            fineAmount = finePerDay.multiply(BigDecimal.valueOf(overdueDays)).setScale(2, RoundingMode.HALF_UP);
-        }
+        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
+        var calculation=fineService.calculate(record.getDueTime().toLocalDate(),record.getFinePerDaySnapshot(),now.toLocalDate());
+        int overdueDays=calculation.overdueDays();
+        BigDecimal fineAmount=calculation.amount();
 
         BorrowRecord update = new BorrowRecord();
         update.setId(borrowId);
@@ -166,19 +165,11 @@ public class BorrowServiceImpl implements IBorrowService {
         if (!"BORROWING".equals(record.getStatus()) || record.getDueTime() == null) {
             return;
         }
-        LocalDateTime now = LocalDateTime.now();
-        if (!now.isAfter(record.getDueTime())) {
-            return;
-        }
-        int overdueDays = (int) ChronoUnit.DAYS.between(record.getDueTime().toLocalDate(), now.toLocalDate());
-        if (overdueDays < 1) {
-            overdueDays = 1;
-        }
-        BigDecimal finePerDay = getDecimalConfig("fine_per_day", new BigDecimal("0.5"));
-        record.setOverdueDays(overdueDays);
-        record.setFineAmount(finePerDay.multiply(BigDecimal.valueOf(overdueDays)).setScale(2, RoundingMode.HALF_UP));
-        record.setOverdue(true);
-        record.setRemainDays((long) -overdueDays);
+        var today=java.time.LocalDate.now(com.example.book.service.FineService.ZONE);
+        var result=fineService.calculate(record.getDueTime().toLocalDate(),record.getFinePerDaySnapshot(),today);
+        record.setOverdueDays(result.overdueDays()); record.setFineAmount(result.amount());
+        record.setOverdue(result.overdueDays()>0);
+        record.setRemainDays(ChronoUnit.DAYS.between(today,record.getDueTime().toLocalDate()));
     }
 
     @Override
@@ -223,7 +214,7 @@ public class BorrowServiceImpl implements IBorrowService {
 
     @Override
     public List<BookStatVO> statTopBooks(int limit) {
-        return borrowMapper.statTopBooks(limit);
+        return borrowMapper.statTopBooks(Math.max(1,Math.min(10,limit)));
     }
 
     private int getIntConfig(String key, int defaultValue) {

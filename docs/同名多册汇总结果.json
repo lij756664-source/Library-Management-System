@@ -1,0 +1,91 @@
+{
+  "topBooks": [
+    {
+      "bookId": 33,
+      "bookTitle": "QA同名多册图书",
+      "categoryName": "QA同名A",
+      "borrowCount": 6
+    },
+    {
+      "bookId": 34,
+      "bookTitle": "QA同名多册图书",
+      "categoryName": "QA同名B",
+      "borrowCount": 2
+    }
+  ],
+  "categoryStats": [
+    {
+      "categoryName": "QA同名A",
+      "borrowCount": 6,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "QA同名B",
+      "borrowCount": 2,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "计算机",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "教材",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "科幻",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "文学",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "历史",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "测试空分类",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "日期测试专用",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "QA排行A",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "QA排行B",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "QA排行零",
+      "borrowCount": 0,
+      "overdueCount": 0
+    },
+    {
+      "categoryName": "QA日期边界",
+      "borrowCount": 0,
+      "overdueCount": 0
+    }
+  ],
+  "dashboard": {
+    "totalBooks": 34,
+    "totalStock": null,
+    "borrowingCount": null,
+    "overdueCount": null,
+    "totalFine": 2.5,
+    "userCount": 4
+  }
+}

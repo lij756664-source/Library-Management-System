@@ -24,23 +24,27 @@
       <el-table-column label="借阅时间" width="170">
         <template #default="{ row }">{{ formatDateTime(row.borrowTime) }}</template>
       </el-table-column>
-      <el-table-column label="应还时间" width="170">
-        <template #default="{ row }">{{ formatDateTime(row.dueTime) }}</template>
+      <el-table-column label="应还日期（北京）" width="170">
+        <template #default="{ row }">{{ String(row.dueTime).slice(0,10) }}</template>
       </el-table-column>
       <el-table-column label="剩余/逾期" width="120" align="center">
         <template #default="{ row }">
-          <span :class="{ 'text-danger': row.overdue }">{{ getRemainText(row.remainDays, row.overdue) }}</span>
+          <span v-if="row.status === 'BORROWING'" :class="{ 'text-danger': row.overdue }">{{ getRemainText(row.remainDays, row.overdue) }}</span>
+          <span v-else class="text-muted">—</span>
         </template>
       </el-table-column>
       <el-table-column prop="renewCount" label="续借次数" width="90" align="center" />
-      <el-table-column label="罚款(元)" width="100" align="right">
+      <el-table-column label="罚金(元)" width="100" align="right">
         <template #default="{ row }">
           <span :class="{ 'text-danger': row.overdue }">
             {{ formatFine(row) }}
           </span>
-          <span v-if="isEstimatedFine(row)" class="fine-hint">预估</span>
         </template>
       </el-table-column>
+      <el-table-column prop="overdueDays" label="逾期天数" width="100" />
+      <el-table-column label="日费(元)" width="100"><template #default="{ row }">{{ Number(row.finePerDaySnapshot).toFixed(2) }}</template></el-table-column>
+      <el-table-column label="金额性质" width="100"><template #default="{ row }"><el-tooltip :content="row.status === 'RETURNED' ? '按实际归还日期核算，不表示已缴费' : '按北京时间当天暂计，归还时核算最终金额'"><el-tag :type="row.status === 'RETURNED' ? 'success' : 'info'" size="small">{{ row.status === 'RETURNED' ? '最终' : '暂计' }}</el-tag></el-tooltip></template></el-table-column>
+      <el-table-column label="实际归还时间" width="170"><template #default="{ row }">{{ row.returnTime ? formatDateTime(row.returnTime) : '尚未归还' }}</template></el-table-column>
       <el-table-column label="操作" width="160" align="center" fixed="right">
         <template #default="{ row }">
           <template v-if="row.status === 'BORROWING'">
@@ -58,10 +62,10 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Refresh } from '@element-plus/icons-vue'
-import { getMyBorrows, renewBook, returnBook, getBorrowRules } from '../api/borrow'
+import { getMyBorrows, renewBook, returnBook } from '../api/borrow'
 import BorrowStatusTag from '../components/BorrowStatusTag.vue'
 import { formatDateTime, getRemainText } from '../utils/date'
-import { calcDisplayFine, isEstimatedFine } from '../utils/fine'
+import { calcDisplayFine } from '../utils/fine'
 
 const loading = ref(false)
 const records = ref([])
@@ -91,7 +95,7 @@ const handleRenew = (row) => {
 }
 
 const handleReturn = (row) => {
-  const tip = row.overdue ? '该书已逾期，归还将产生罚款，确定归还吗？' : `确定归还《${row.bookTitle}》吗？`
+  const tip = row.overdue ? `该书已逾期 ${row.overdueDays} 天，暂计罚金 ${formatFine(row)} 元，归还时将核算最终金额。确定归还吗？` : `确定归还《${row.bookTitle}》吗？`
   ElMessageBox.confirm(tip, '归还确认', { type: row.overdue ? 'warning' : 'info' })
     .then(async () => {
       await returnBook(row.id)
@@ -101,15 +105,8 @@ const handleReturn = (row) => {
     .catch(() => {})
 }
 
-onMounted(async () => {
-  try {
-    const rulesRes = await getBorrowRules()
-    if (rulesRes.data?.fine_per_day) {
-      finePerDay.value = Number(rulesRes.data.fine_per_day)
-    }
-  } catch (_) { /* 使用默认 0.5 */ }
-  loadData()
-})
+onMounted(loadData)
+
 </script>
 
 <style scoped>

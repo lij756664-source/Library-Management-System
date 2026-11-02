@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.book.mapper.StatisticsMapper">
+<sql id="range"><if test="start != null">AND br.borrow_time &gt;= #{start} AND br.borrow_time &lt; #{end}</if></sql>
+<select id="top" resultType="com.example.book.vo.BookStatVO">
+ SELECT b.id AS bookId,b.title AS bookTitle,c.name AS categoryName,COUNT(br.id) AS borrowCount
+ FROM borrow_record br JOIN book b ON b.id=br.book_id LEFT JOIN category c ON c.id=b.category_id
+ WHERE br.status IN ('BORROWING','RETURNED') <include refid="range"/>
+ GROUP BY b.id,b.title,c.name ORDER BY borrowCount DESC,b.id ASC LIMIT 10
+</select>
+<select id="categories" resultType="com.example.book.vo.CategoryStatVO">
+ SELECT c.name AS categoryName,COUNT(br.id) AS borrowCount,
+ SUM(CASE WHEN br.status='BORROWING' AND DATE(br.due_time)&lt;DATE(CONVERT_TZ(UTC_TIMESTAMP(),'+00:00','+08:00')) THEN 1 ELSE 0 END) AS overdueCount
+ FROM category c LEFT JOIN book b ON b.category_id=c.id
+ LEFT JOIN borrow_record br ON br.book_id=b.id AND br.status IN ('BORROWING','RETURNED') <include refid="range"/>
+ GROUP BY c.id,c.name ORDER BY borrowCount DESC,c.id ASC
+</select></mapper>

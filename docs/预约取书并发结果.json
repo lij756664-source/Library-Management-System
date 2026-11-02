@@ -1,0 +1,26 @@
+[
+  {
+    "name": "H04补充：改规则与预约取书",
+    "startedAt": "2026-11-01T12:32:38.562Z",
+    "observedLockWaiters": 2,
+    "responses": [
+      {
+        "code": 200,
+        "message": "操作成功",
+        "completedAt": "2026-11-01T12:32:38.865Z"
+      },
+      {
+        "code": 200,
+        "message": "取书成功，已转为借阅",
+        "completedAt": "2026-11-01T12:32:38.859Z"
+      }
+    ],
+    "passed": true,
+    "snapshot": [
+      3,
+      2,
+      7,
+      0.5
+    ]
+  }
+]

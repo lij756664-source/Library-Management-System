@@ -21,13 +21,16 @@ public class ReservationServiceImpl implements IReservationService {
 
     private final ReservationMapper reservationMapper;
     private final BookMapper bookMapper;
+    private final com.example.book.service.RuleService ruleService;
+    private final com.example.book.service.FineService fineService;
     private final BorrowMapper borrowMapper;
     private final SystemConfigMapper systemConfigMapper;
 
     public ReservationServiceImpl(ReservationMapper reservationMapper, BookMapper bookMapper,
-                                  BorrowMapper borrowMapper, SystemConfigMapper systemConfigMapper) {
+                                  BorrowMapper borrowMapper, SystemConfigMapper systemConfigMapper, com.example.book.service.RuleService ruleService, com.example.book.service.FineService fineService) {
         this.reservationMapper = reservationMapper;
         this.bookMapper = bookMapper;
+        this.ruleService=ruleService; this.fineService=fineService;
         this.borrowMapper = borrowMapper;
         this.systemConfigMapper = systemConfigMapper;
     }
@@ -56,7 +59,7 @@ public class ReservationServiceImpl implements IReservationService {
             throw new BusinessException(400, "已达最大预约数量（" + maxReserve + "本）");
         }
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
         Reservation reservation = new Reservation();
         reservation.setUserId(userId);
         reservation.setBookId(bookId);
@@ -96,6 +99,7 @@ public class ReservationServiceImpl implements IReservationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void pickup(Integer userId, Integer reservationId) {
+        ruleService.lock();
         processExpiredReady();
 
         Reservation reservation = reservationMapper.findById(reservationId);
@@ -108,7 +112,7 @@ public class ReservationServiceImpl implements IReservationService {
         if (!"READY".equals(reservation.getStatus())) {
             throw new BusinessException(400, "尚未轮到您取书，请继续排队");
         }
-        if (reservation.getExpireTime() != null && LocalDateTime.now().isAfter(reservation.getExpireTime())) {
+        if (reservation.getExpireTime() != null && LocalDateTime.now(com.example.book.service.FineService.ZONE).isAfter(reservation.getExpireTime())) {
             expireAndPromote(reservation);
             throw new BusinessException(400, "取书期限已过，预约已失效");
         }
@@ -122,7 +126,7 @@ public class ReservationServiceImpl implements IReservationService {
         }
 
         int borrowDays = getIntConfig("borrow_days", 30);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
         BorrowRecord record = new BorrowRecord();
         record.setUserId(userId);
         record.setBookId(reservation.getBookId());
@@ -130,6 +134,7 @@ public class ReservationServiceImpl implements IReservationService {
         record.setDueTime(now.plusDays(borrowDays));
         record.setStatus("BORROWING");
         record.setRenewCount(0);
+        ruleService.snapshot(record, ruleService.current());
         if (borrowMapper.insert(record) <= 0) {
             throw new BusinessException("创建借阅记录失败");
         }
@@ -160,7 +165,7 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     private void processExpiredReady() {
-        List<Reservation> expired = reservationMapper.findExpiredReady(LocalDateTime.now());
+        List<Reservation> expired = reservationMapper.findExpiredReady(LocalDateTime.now(com.example.book.service.FineService.ZONE));
         for (Reservation reservation : expired) {
             expireAndPromote(reservation);
         }
@@ -182,7 +187,7 @@ public class ReservationServiceImpl implements IReservationService {
             return;
         }
         int pickupDays = getIntConfig("pickup_days", 3);
-        LocalDateTime expireTime = LocalDateTime.now().plusDays(pickupDays);
+        LocalDateTime expireTime = LocalDateTime.now(com.example.book.service.FineService.ZONE).plusDays(pickupDays);
         if (reservationMapper.updateToReady(waiting.getId(), expireTime) <= 0) {
             bookMapper.increaseStock(bookId);
         }

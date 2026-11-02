@@ -19,18 +19,23 @@ request.interceptors.response.use(
   (response) => {
     const res = response.data
     if (res.code !== 200) {
-      ElMessage.error(res.message || '请求失败')
+      if (!response.config.silentError) ElMessage.error(res.message || '请求失败')
       if (res.code === 401) {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         router.push('/login')
       }
-      return Promise.reject(new Error(res.message || '请求失败'))
+      const error = new Error(res.message || '请求失败')
+      error.businessCode = res.code
+      return Promise.reject(error)
     }
     return res
   },
   (error) => {
-    ElMessage.error(error.message || '网络错误')
+    const message = error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT'
+      ? '请求超时，请稍后重试'
+      : !error.response ? '网络连接异常，请检查连接后重试' : '服务暂不可用，请稍后重试'
+    if (!error.config?.silentError) ElMessage.error(message)
     return Promise.reject(error)
   }
 )

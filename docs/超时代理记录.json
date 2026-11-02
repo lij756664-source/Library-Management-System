@@ -1,0 +1,32 @@
+[
+  {
+    "at": "2026-11-01T12:27:34.163Z",
+    "setMode": "committed"
+  },
+  {
+    "at": "2026-11-01T12:28:07.099Z",
+    "action": "backend-completed-response-withheld",
+    "code": 200
+  },
+  {
+    "at": "2026-11-01T12:28:39.239Z",
+    "setMode": "not-committed"
+  },
+  {
+    "at": "2026-11-01T12:29:00.014Z",
+    "action": "request-not-forwarded"
+  },
+  {
+    "at": "2026-11-01T12:29:50.516Z",
+    "setMode": "commit-query-fail"
+  },
+  {
+    "at": "2026-11-01T12:30:01.777Z",
+    "action": "backend-completed-response-withheld",
+    "code": 200
+  },
+  {
+    "at": "2026-11-01T12:30:11.770Z",
+    "action": "verification-query-failed"
+  }
+]

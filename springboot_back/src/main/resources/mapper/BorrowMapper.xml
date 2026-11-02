@@ -7,23 +7,12 @@
         SELECT br.id, br.user_id AS userId, br.book_id AS bookId,
                br.borrow_time AS borrowTime, br.due_time AS dueTime,
                br.return_time AS returnTime, br.status, br.renew_count AS renewCount,
-               CASE
-                   WHEN br.status = 'BORROWING' AND br.due_time &lt; NOW() THEN
-                       GREATEST(DATEDIFF(DATE(NOW()), DATE(br.due_time)), 1)
-                   ELSE br.overdue_days
-               END AS overdueDays,
-               CASE
-                   WHEN br.status = 'RETURNED' THEN br.fine_amount
-                   WHEN br.status = 'BORROWING' AND br.due_time &lt; NOW() THEN
-                       GREATEST(DATEDIFF(DATE(NOW()), DATE(br.due_time)), 1) *
-                       IFNULL((SELECT CAST(config_value AS DECIMAL(10, 2))
-                               FROM system_config WHERE config_key = 'fine_per_day' LIMIT 1), 0.5)
-                   ELSE 0
-               END AS fineAmount,
+               br.borrow_days_snapshot, br.max_renew_count_snapshot, br.renew_days_snapshot, br.fine_per_day_snapshot,
+               br.overdue_days AS overdueDays, br.fine_amount AS fineAmount,
                u.username, u.nickname,
                b.title AS bookTitle, b.author AS bookAuthor,
                c.name AS categoryName,
-               CASE WHEN br.status = 'BORROWING' AND br.due_time &lt; NOW() THEN 1 ELSE 0 END AS overdue,
+               CASE WHEN br.status = 'BORROWING' AND DATE(br.due_time) &lt; DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+08:00')) THEN 1 ELSE 0 END AS overdue,
                DATEDIFF(br.due_time, NOW()) AS remainDays
         FROM borrow_record br
         INNER JOIN user u ON br.user_id = u.id
@@ -32,8 +21,8 @@
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO borrow_record (user_id, book_id, borrow_time, due_time, status, renew_count, overdue_days, fine_amount)
-        VALUES (#{userId}, #{bookId}, #{borrowTime}, #{dueTime}, #{status}, #{renewCount}, 0, 0)
+        INSERT INTO borrow_record (user_id, book_id, borrow_time, due_time, status, renew_count, overdue_days, fine_amount, borrow_days_snapshot, max_renew_count_snapshot, renew_days_snapshot, fine_per_day_snapshot)
+        VALUES (#{userId}, #{bookId}, #{borrowTime}, #{dueTime}, #{status}, #{renewCount}, 0, 0, #{borrowDaysSnapshot}, #{maxRenewCountSnapshot}, #{renewDaysSnapshot}, #{finePerDaySnapshot})
     </insert>
 
     <select id="findById" resultType="com.example.book.entity.BorrowRecord">
@@ -104,19 +93,11 @@
     <select id="getDashboardStats" resultType="com.example.book.vo.DashboardVO">
         SELECT
             (SELECT COUNT(*) FROM book) AS totalBooks,
-            (SELECT IFNULL(SUM(stock), 0) FROM book) AS totalStock,
+            (SELECT COALESCE(SUM(stock), 0) FROM book) AS totalStock,
             (SELECT COUNT(*) FROM borrow_record WHERE status = 'BORROWING') AS borrowingCount,
-            (SELECT COUNT(*) FROM borrow_record WHERE status = 'BORROWING' AND due_time &lt; NOW()) AS overdueCount,
-            (SELECT IFNULL(SUM(
-                CASE
-                    WHEN status = 'RETURNED' THEN fine_amount
-                    WHEN status = 'BORROWING' AND due_time &lt; NOW() THEN
-                        GREATEST(DATEDIFF(DATE(NOW()), DATE(due_time)), 1) *
-                        IFNULL((SELECT CAST(config_value AS DECIMAL(10, 2))
-                                FROM system_config WHERE config_key = 'fine_per_day' LIMIT 1), 0.5)
-                    ELSE 0
-                END
-            ), 0) FROM borrow_record) AS totalFine,
+            (SELECT COUNT(*) FROM borrow_record WHERE status = 'BORROWING'
+                AND DATE(due_time) &lt; DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+08:00'))) AS overdueCount,
+            0 AS totalFine,
             (SELECT COUNT(*) FROM user WHERE role = 'USER') AS userCount
     </select>
 
@@ -124,7 +105,7 @@
     <select id="statByCategory" resultType="com.example.book.vo.CategoryStatVO">
         SELECT c.name AS categoryName,
                COUNT(br.id) AS borrowCount,
-               SUM(CASE WHEN br.status = 'BORROWING' AND br.due_time &lt; NOW() THEN 1 ELSE 0 END) AS overdueCount
+               SUM(CASE WHEN br.status = 'BORROWING' AND DATE(br.due_time) &lt; DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+08:00')) THEN 1 ELSE 0 END) AS overdueCount
         FROM category c
         LEFT JOIN book b ON c.id = b.category_id
         LEFT JOIN borrow_record br ON b.id = br.book_id
@@ -140,7 +121,8 @@
         LEFT JOIN category c ON b.category_id = c.id
         LEFT JOIN borrow_record br ON b.id = br.book_id
         GROUP BY b.id, b.title, c.name
-        ORDER BY borrowCount DESC
+        HAVING COUNT(br.id) > 0
+        ORDER BY borrowCount DESC, b.id ASC
         LIMIT #{limit}
     </select>
 

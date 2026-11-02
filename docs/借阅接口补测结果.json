@@ -1,0 +1,23 @@
+{
+  "tests": [
+    {
+      "name": "逾期不能续借",
+      "code": 400,
+      "message": "图书已逾期，请先归还后再借阅",
+      "passed": true
+    },
+    {
+      "name": "已还不能续借",
+      "code": 400,
+      "message": "该记录已归还，无法续借",
+      "passed": true
+    },
+    {
+      "name": "已还不能重复归还",
+      "code": 400,
+      "message": "该图书已归还",
+      "passed": true
+    }
+  ],
+  "unchanged": true
+}

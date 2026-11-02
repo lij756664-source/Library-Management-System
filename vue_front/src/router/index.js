@@ -15,6 +15,8 @@ import ReservationManage from '../views/ReservationManage.vue'
 import Statistics from '../views/Statistics.vue'
 import AdminUsers from '../views/AdminUsers.vue'
 
+import Rules from '../views/Rules.vue'
+
 const routes = [
   { path: '/login', name: 'Login', component: Login, meta: { public: true } },
   { path: '/register', name: 'Register', component: Register, meta: { public: true } },
@@ -23,6 +25,7 @@ const routes = [
     component: Layout,
     redirect: '/browse',
     children: [
+      { path: 'rules', component: Rules, meta: { title: '规则设置', roles: ['ADMIN'] } },
       { path: 'browse', name: 'BookBrowse', component: BookBrowse, meta: { title: '图书查询', roles: ['ADMIN', 'USER'] } },
       { path: 'my-borrows', name: 'MyBorrows', component: MyBorrows, meta: { title: '我的借阅', roles: ['ADMIN', 'USER'] } },
       { path: 'my-reservations', name: 'MyReservations', component: MyReservations, meta: { title: '我的预约', roles: ['ADMIN', 'USER'] } },

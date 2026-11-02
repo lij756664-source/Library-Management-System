@@ -12,10 +12,10 @@
       <el-form-item>
         <el-button type="primary" :icon="Search" @click="loadBooks">搜索</el-button>
         <el-button :icon="Refresh" @click="resetSearch">重置</el-button>
+        <el-button @click="rulesVisible = true">查看最新规则</el-button>
       </el-form-item>
     </el-form>
 
-    <el-alert v-if="rulesText" :title="rulesText" type="info" show-icon :closable="false" class="rules-alert" />
 
     <el-table :data="books" v-loading="loading" stripe class="data-table">
       <el-table-column prop="title" label="书名" min-width="160" show-overflow-tooltip />
@@ -44,29 +44,27 @@
         </template>
       </el-table-column>
     </el-table>
+    <BorrowRulesDialog v-model="rulesVisible" />
   </el-card>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh } from '@element-plus/icons-vue'
 import { getBooks } from '../api/book'
 import { getCategories } from '../api/category'
-import { borrowBook, getBorrowRules } from '../api/borrow'
+import { borrowBook } from '../api/borrow'
 import { reserveBook } from '../api/reservation'
+import BorrowRulesDialog from '../components/BorrowRulesDialog.vue'
 
 const loading = ref(false)
 const books = ref([])
 const categories = ref([])
-const rules = ref({})
+const rulesVisible = ref(false)
 
 const searchForm = reactive({ keyword: '', categoryId: null })
 
-const rulesText = computed(() => {
-  if (!rules.value.borrow_days) return ''
-  return `借阅规则：默认借期 ${rules.value.borrow_days} 天，可续借 ${rules.value.max_renew_count} 次（每次 ${rules.value.renew_days} 天），逾期每天罚款 ${rules.value.fine_per_day} 元，最多同时借阅 ${rules.value.max_borrow_count} 册`
-})
 
 const loadBooks = async () => {
   loading.value = true
@@ -86,10 +84,6 @@ const loadCategories = async () => {
   categories.value = res.data
 }
 
-const loadRules = async () => {
-  const res = await getBorrowRules()
-  rules.value = res.data
-}
 
 const resetSearch = () => {
   searchForm.keyword = ''
@@ -120,7 +114,6 @@ const handleReserve = (row) => {
 onMounted(() => {
   loadBooks()
   loadCategories()
-  loadRules()
 })
 </script>
 

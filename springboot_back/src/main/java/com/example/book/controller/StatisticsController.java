@@ -20,10 +20,11 @@ import java.util.Map;
 @RequireRole("ADMIN")
 public class StatisticsController {
 
+    private final com.example.book.service.StatisticsService statisticsService;
     private final IBorrowService borrowService;
 
-    public StatisticsController(IBorrowService borrowService) {
-        this.borrowService = borrowService;
+    public StatisticsController(IBorrowService borrowService, com.example.book.service.StatisticsService statisticsService) {
+        this.borrowService = borrowService; this.statisticsService=statisticsService;
     }
 
     @GetMapping("/dashboard")
@@ -42,11 +43,11 @@ public class StatisticsController {
     }
 
     @GetMapping("/overview")
-    public Result<Map<String, Object>> overview() {
-        Map<String, Object> data = new HashMap<>();
+    public Result<Map<String, Object>> overview(@RequestParam(required=false) @org.springframework.format.annotation.DateTimeFormat(iso=org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate start, @RequestParam(required=false) @org.springframework.format.annotation.DateTimeFormat(iso=org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate end) {
+        Map<String, Object> data = statisticsService.query(start,end);
         data.put("dashboard", borrowService.dashboard());
-        data.put("categoryStats", borrowService.statByCategory());
-        data.put("topBooks", borrowService.statTopBooks(5));
+
+
         return Result.success(data);
     }
 }
