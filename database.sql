@@ -70,7 +70,7 @@ CREATE TABLE `borrow_record` (
     fine_per_day_snapshot DECIMAL(3,2) NOT NULL DEFAULT 0.50,
     renew_count INT NOT NULL DEFAULT 0 COMMENT '已续借次数',
     `overdue_days` INT DEFAULT 0 COMMENT '逾期天数',
-    `fine_amount` DECIMAL(10, 2) DEFAULT 0.00 COMMENT '罚款金额',
+    `fine_amount` DECIMAL(12, 2) DEFAULT 0.00 COMMENT '罚款金额',
     PRIMARY KEY (`id`),
     KEY `idx_user_id` (`user_id`),
     KEY `idx_book_id` (`book_id`),
