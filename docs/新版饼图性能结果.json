@@ -1,0 +1,405 @@
+{
+  "testedAt": "2026-11-02T01:07:42.365Z",
+  "commit": "b2b17c96c74981a46aba20b61e39b59e6aed9edf",
+  "firstQueryRetained": true,
+  "totalQueries": 25,
+  "scale": {
+    "books": 1000,
+    "totalCopies": 3000,
+    "available": 2000,
+    "categories": 10,
+    "readers": 500,
+    "borrows": 10000,
+    "active": 1000,
+    "overdueActive": 200
+  },
+  "environment": {
+    "cpu": "Intel(R) Core(TM) Ultra 5 125H",
+    "memoryGiB": 32,
+    "os": "Windows_NT 10.0.26200",
+    "node": "v24.16.0",
+    "java": "17.0.20.1",
+    "springBoot": "3.2.5",
+    "mysql": "8.0.43",
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+    "viewport": {
+      "width": 1440,
+      "height": 960
+    },
+    "deployment": "Same computer; production static assets + test HTTP proxy 5175 -> Spring Boot 8081 -> book_db_perf",
+    "distIndexSha256": "b56934f7ab93cd60dd41017f552652e993d3ac8677a170832320b79c04c07541"
+  },
+  "groups": [
+    {
+      "name": "全部历史",
+      "start": "",
+      "end": "",
+      "checks": [
+        {
+          "sequence": 1,
+          "kind": "first-navigation",
+          "ms": 1272.5,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 2,
+          "kind": "query-click",
+          "ms": 876.7,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 3,
+          "kind": "query-click",
+          "ms": 930.6,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 4,
+          "kind": "query-click",
+          "ms": 931.1,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 5,
+          "kind": "query-click",
+          "ms": 1247.9,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        }
+      ],
+      "maxMs": 1272.5,
+      "passed": true
+    },
+    {
+      "name": "跨12个月",
+      "start": "2024-01-01",
+      "end": "2024-12-31",
+      "checks": [
+        {
+          "sequence": 6,
+          "kind": "query-click",
+          "ms": 913.4,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 7,
+          "kind": "query-click",
+          "ms": 1096.7,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 8,
+          "kind": "query-click",
+          "ms": 879.6,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 9,
+          "kind": "query-click",
+          "ms": 876.9,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 10,
+          "kind": "query-click",
+          "ms": 881.8,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        }
+      ],
+      "maxMs": 1096.7,
+      "passed": true
+    },
+    {
+      "name": "单月",
+      "start": "2024-02-01",
+      "end": "2024-02-29",
+      "checks": [
+        {
+          "sequence": 11,
+          "kind": "query-click",
+          "ms": 830.2,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 12,
+          "kind": "query-click",
+          "ms": 766.3,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 13,
+          "kind": "query-click",
+          "ms": 796.6,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 14,
+          "kind": "query-click",
+          "ms": 950.5,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 15,
+          "kind": "query-click",
+          "ms": 815,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        }
+      ],
+      "maxMs": 950.5,
+      "passed": true
+    },
+    {
+      "name": "单日",
+      "start": "2024-01-01",
+      "end": "2024-01-01",
+      "checks": [
+        {
+          "sequence": 16,
+          "kind": "query-click",
+          "ms": 810.8,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 17,
+          "kind": "query-click",
+          "ms": 781.4,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 18,
+          "kind": "query-click",
+          "ms": 796,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 19,
+          "kind": "query-click",
+          "ms": 815.3,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 20,
+          "kind": "query-click",
+          "ms": 733.6,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        }
+      ],
+      "maxMs": 815.3,
+      "passed": true
+    },
+    {
+      "name": "无数据",
+      "start": "2000-01-01",
+      "end": "2000-01-01",
+      "checks": [
+        {
+          "sequence": 21,
+          "kind": "query-click",
+          "ms": 729.8,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 22,
+          "kind": "query-click",
+          "ms": 765.4,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 23,
+          "kind": "query-click",
+          "ms": 685.6,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 24,
+          "kind": "query-click",
+          "ms": 682.1,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        },
+        {
+          "sequence": 25,
+          "kind": "query-click",
+          "ms": 697.9,
+          "countsCorrect": true,
+          "percentagesCorrect": true,
+          "sectorsCorrect": true,
+          "ranksCorrect": true,
+          "httpOk": true,
+          "noErrors": true,
+          "rendered": true,
+          "withinLimit": true
+        }
+      ],
+      "maxMs": 765.4,
+      "passed": true
+    }
+  ],
+  "passed": true
+}
