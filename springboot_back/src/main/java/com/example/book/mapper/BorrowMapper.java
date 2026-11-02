@@ -20,6 +20,8 @@ public interface BorrowMapper {
 
     int countByBookId(@Param("bookId") Integer bookId);
 
+    int countActiveByBookId(@Param("bookId") Integer bookId);
+
     int updateRenew(@Param("id") Integer id, @Param("dueTime") java.time.LocalDateTime dueTime);
 
     int updateReturn(BorrowRecord record);

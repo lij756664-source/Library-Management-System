@@ -16,6 +16,8 @@ public class Book {
     private String categoryName;
     private BigDecimal price;
     private Integer stock;
+    /** 馆藏位置（书架/馆室），读者可查询的公开馆藏信息 */
+    private String location;
     private String description;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;

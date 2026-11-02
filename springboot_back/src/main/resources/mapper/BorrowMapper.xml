@@ -126,4 +126,7 @@
         LIMIT #{limit}
     </select>
 
+    <select id="countActiveByBookId" resultType="int">
+        SELECT COUNT(*) FROM borrow_record WHERE book_id = #{bookId} AND status = 'BORROWING'
+    </select>
 </mapper>

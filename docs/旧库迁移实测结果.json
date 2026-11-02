@@ -1,0 +1,15 @@
+{
+  "testedAt": "2026-11-02T01:24:11.208Z",
+  "database": "book_db_migration_20261102",
+  "sourceCommit": "b79f2d5f85ecbaddc6f9a03899037158e26c20bb",
+  "checks": {
+    "originalRecordsUnchanged": true,
+    "oldRulesSnapshotted": true,
+    "defaultRulesAndReservationSettings": true,
+    "amountPrecision": true,
+    "fourRequiredSnapshots": true
+  },
+  "recordCount": 2,
+  "passed": true,
+  "scope": "Original shared schema -> one migration run; custom rule snapshots and returned final amounts preserved; no changes to existing libraries"
+}
