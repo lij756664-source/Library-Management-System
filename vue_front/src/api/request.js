@@ -25,7 +25,8 @@ function resolveErrorMessage(error) {
   }
   const status = error.response.status
   if (status === 401) return '登录已过期，请重新登录'
-  if (status === 403) return '无权限执行该操作，仅图书管理员可维护馆藏数据'
+  if (status === 403) return /\/(books|categories)(?:\/|$|\?)/.test(error.config?.url || '')
+    ? '无权限执行该操作，仅图书管理员可维护馆藏数据' : '无权限执行该操作'
   if (status === 404) return '请求的资源不存在'
   if (status >= 500) return '服务器繁忙，请稍后重试'
   return '请求失败，请稍后重试'
@@ -35,23 +36,30 @@ request.interceptors.response.use(
   (response) => {
     const res = response.data
     if (res.code !== 200) {
-      // 403：读者越权访问后台数据时给出明确提示，行为上不做跳转，保持页面可用
-      if (res.code === 403) {
-        ElMessage.error(`${res.message || '无权限访问'}，仅图书管理员可维护馆藏数据`)
-      } else {
-        ElMessage.error(res.message || '请求失败')
+      if (!response.config.silentError) {
+        const catalogRequest = /\/(books|categories)(?:\/|$|\?)/.test(response.config.url || '')
+        const message = res.code === 403 && catalogRequest
+          ? `${res.message || '无权限访问'}，仅图书管理员可维护馆藏数据`
+          : res.message || '请求失败'
+        ElMessage.error(message)
       }
+
       if (res.code === 401) {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         router.push('/login')
       }
-      return Promise.reject(new Error(res.message || '请求失败'))
+      const error = new Error(res.message || '请求失败')
+      error.businessCode = res.code
+      return Promise.reject(error)
     }
     return res
   },
   (error) => {
-    ElMessage.error(error.response?.data?.message || resolveErrorMessage(error))
+    if (!error.config?.silentError) {
+      ElMessage.error(error.response?.data?.message || resolveErrorMessage(error))
+    }
+
     return Promise.reject(error)
   }
 )

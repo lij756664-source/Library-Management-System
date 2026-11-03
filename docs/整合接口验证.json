@@ -1,0 +1,79 @@
+{
+  "testedAt": "2026-11-02T01:58:49.293Z",
+  "database": "book_db_integration_20261102c",
+  "checks": [
+    {
+      "name": "admin login",
+      "passed": true
+    },
+    {
+      "name": "user2 login",
+      "passed": true
+    },
+    {
+      "name": "reader latest rules",
+      "passed": true
+    },
+    {
+      "name": "reader rules editing blocked",
+      "passed": true
+    },
+    {
+      "name": "anonymous books blocked",
+      "passed": true
+    },
+    {
+      "name": "available filter with location",
+      "passed": true
+    },
+    {
+      "name": "book details location",
+      "passed": true
+    },
+    {
+      "name": "reader stock maintenance blocked",
+      "passed": true
+    },
+    {
+      "name": "admin stock increment",
+      "passed": true
+    },
+    {
+      "name": "admin stock restore",
+      "passed": true
+    },
+    {
+      "name": "borrow",
+      "passed": true
+    },
+    {
+      "name": "new rule snapshot",
+      "passed": true
+    },
+    {
+      "name": "renew",
+      "passed": true
+    },
+    {
+      "name": "return",
+      "passed": true
+    },
+    {
+      "name": "returned final zero fine",
+      "passed": true
+    },
+    {
+      "name": "borrow counts once after renew and return",
+      "passed": true
+    },
+    {
+      "name": "stock remains correct after return",
+      "passed": true
+    },
+    {
+      "name": "single date rejected",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

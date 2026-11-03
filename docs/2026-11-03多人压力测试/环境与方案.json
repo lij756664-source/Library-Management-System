@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-03",
+  "base": "http://127.0.0.1:8082/api",
+  "database": "book_db_perf_20261103",
+  "jarSha256": "021e4e4293ea54949a96c52b23bc277890a103eddc839a61031397ffd3f8b141",
+  "scale": {
+    "books": 1000,
+    "totalCopies": 3000,
+    "available": 2000,
+    "categories": 10,
+    "readers": 500,
+    "borrows": 10000,
+    "active": 1000,
+    "overdueActive": 200
+  },
+  "dashboardExpected": {
+    "totalBooks": 1000,
+    "totalStock": 2000,
+    "borrowingCount": 1000,
+    "overdueCount": 200,
+    "totalFine": 1271,
+    "userCount": 500
+  },
+  "workload": "每个用户顺序查询5种范围，完成后等待2—5秒；各范围轮转",
+  "users": [
+    "load_mw03e2b9_1",
+    "load_mw03e2b9_2",
+    "load_mw03e2b9_3",
+    "load_mw03e2b9_4",
+    "load_mw03e2b9_5",
+    "load_mw03e2b9_6",
+    "load_mw03e2b9_7",
+    "load_mw03e2b9_8",
+    "load_mw03e2b9_9",
+    "load_mw03e2b9_10",
+    "load_mw03e2b9_11",
+    "load_mw03e2b9_12",
+    "load_mw03e2b9_13",
+    "load_mw03e2b9_14",
+    "load_mw03e2b9_15",
+    "load_mw03e2b9_16",
+    "load_mw03e2b9_17",
+    "load_mw03e2b9_18",
+    "load_mw03e2b9_19",
+    "load_mw03e2b9_20"
+  ],
+  "thresholds": {
+    "users": 10,
+    "durationSeconds": 300,
+    "p95Ms": 2000,
+    "successRate": 1,
+    "correctnessRate": 1,
+    "browserSamples": 10,
+    "browserMaxMs": 3000
+  },
+  "phases": [
+    {
+      "name": "ramp-5",
+      "users": 5,
+      "seconds": 20
+    },
+    {
+      "name": "acceptance-10",
+      "users": 10,
+      "seconds": 300
+    },
+    {
+      "name": "explore-20",
+      "users": 20,
+      "seconds": 120
+    }
+  ]
+}

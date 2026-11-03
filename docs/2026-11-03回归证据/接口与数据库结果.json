@@ -1,0 +1,2942 @@
+{
+  "startedAt": "2026-11-03T02:09:35.881Z",
+  "version": "3d66e3bba8bcbdb40728f4fd1aa1310ef654b3ed",
+  "base": "http://127.0.0.1:8080/api",
+  "database": "book_db_regression",
+  "prefix": "rg_mw01v3wp",
+  "records": [
+    {
+      "id": "ENV",
+      "steps": "核对local配置与MySQL活动连接",
+      "expected": "独立测试库且原规则30/2/7/0.50/3",
+      "actual": {
+        "database": "book_db_regression",
+        "connections": 11,
+        "rules": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F02",
+      "steps": "管理员保存B，重新GET并由读者读取",
+      "expected": "五项整组更新；基线库仍30天",
+      "actual": {
+        "response": {
+          "borrow_days": "20",
+          "renew_days": "5",
+          "max_renew_count": "1",
+          "fine_per_day": "1.00",
+          "max_borrow_count": "3"
+        },
+        "targetRules": "20",
+        "sourceRules": "30"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A02-read",
+      "steps": "读者GET latest",
+      "expected": "可读取完整A",
+      "actual": {
+        "url": "/rules/latest",
+        "method": "GET",
+        "start": "2026-11-03T02:09:37.760Z",
+        "end": "2026-11-03T02:09:37.771Z",
+        "ms": 11,
+        "http": 200,
+        "code": 200,
+        "message": "操作成功",
+        "data": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-borrow_days-0",
+      "steps": "PUT五项规则，其中borrow_days=0；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.773Z",
+          "end": "2026-11-03T02:09:37.812Z",
+          "ms": 39,
+          "http": 200,
+          "code": 400,
+          "message": "借阅期限的范围为1—90",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-borrow_days-91",
+      "steps": "PUT五项规则，其中borrow_days=91；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.822Z",
+          "end": "2026-11-03T02:09:37.833Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "借阅期限的范围为1—90",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-borrow_days-1.5",
+      "steps": "PUT五项规则，其中borrow_days=1.5；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.843Z",
+          "end": "2026-11-03T02:09:37.853Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "借阅期限须为整数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-borrow_days-abc",
+      "steps": "PUT五项规则，其中borrow_days=abc；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.863Z",
+          "end": "2026-11-03T02:09:37.873Z",
+          "ms": 11,
+          "http": 200,
+          "code": 400,
+          "message": "借阅期限须为整数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-borrow_days-",
+      "steps": "PUT五项规则，其中borrow_days=；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.884Z",
+          "end": "2026-11-03T02:09:37.894Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写借阅期限",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-borrow_days-null",
+      "steps": "PUT五项规则，其中borrow_days=null；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.904Z",
+          "end": "2026-11-03T02:09:37.915Z",
+          "ms": 11,
+          "http": 200,
+          "code": 400,
+          "message": "请填写借阅期限",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-borrow_days-undefined",
+      "steps": "PUT五项规则，其中borrow_days=undefined；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.925Z",
+          "end": "2026-11-03T02:09:37.934Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写借阅期限",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_renew_count--1",
+      "steps": "PUT五项规则，其中max_renew_count=-1；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.943Z",
+          "end": "2026-11-03T02:09:37.953Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "续借次数上限须为整数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_renew_count-6",
+      "steps": "PUT五项规则，其中max_renew_count=6；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.964Z",
+          "end": "2026-11-03T02:09:37.973Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "续借次数上限的范围为0—5",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_renew_count-1.5",
+      "steps": "PUT五项规则，其中max_renew_count=1.5；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:37.982Z",
+          "end": "2026-11-03T02:09:37.991Z",
+          "ms": 8,
+          "http": 200,
+          "code": 400,
+          "message": "续借次数上限须为整数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_renew_count-null",
+      "steps": "PUT五项规则，其中max_renew_count=null；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.000Z",
+          "end": "2026-11-03T02:09:38.009Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写续借次数上限",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_renew_count-undefined",
+      "steps": "PUT五项规则，其中max_renew_count=undefined；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.019Z",
+          "end": "2026-11-03T02:09:38.027Z",
+          "ms": 8,
+          "http": 200,
+          "code": 400,
+          "message": "请填写续借次数上限",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-renew_days-0",
+      "steps": "PUT五项规则，其中renew_days=0；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.037Z",
+          "end": "2026-11-03T02:09:38.048Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "每次续借天数的范围为1—30",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-renew_days-31",
+      "steps": "PUT五项规则，其中renew_days=31；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.056Z",
+          "end": "2026-11-03T02:09:38.065Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "每次续借天数的范围为1—30",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-renew_days-1.5",
+      "steps": "PUT五项规则，其中renew_days=1.5；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.075Z",
+          "end": "2026-11-03T02:09:38.083Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "每次续借天数须为整数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-renew_days-null",
+      "steps": "PUT五项规则，其中renew_days=null；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.093Z",
+          "end": "2026-11-03T02:09:38.101Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写每次续借天数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-renew_days-undefined",
+      "steps": "PUT五项规则，其中renew_days=undefined；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.111Z",
+          "end": "2026-11-03T02:09:38.120Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "请填写每次续借天数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-fine_per_day--0.01",
+      "steps": "PUT五项规则，其中fine_per_day=-0.01；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.128Z",
+          "end": "2026-11-03T02:09:38.138Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "每日罚金须为非负数，且最多保留两位小数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-fine_per_day-5.01",
+      "steps": "PUT五项规则，其中fine_per_day=5.01；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.150Z",
+          "end": "2026-11-03T02:09:38.160Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "每日罚金的范围为0—5.00元",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-fine_per_day-0.501",
+      "steps": "PUT五项规则，其中fine_per_day=0.501；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.170Z",
+          "end": "2026-11-03T02:09:38.180Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "每日罚金须为非负数，且最多保留两位小数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-fine_per_day-null",
+      "steps": "PUT五项规则，其中fine_per_day=null；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.189Z",
+          "end": "2026-11-03T02:09:38.198Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写每日罚金",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-fine_per_day-undefined",
+      "steps": "PUT五项规则，其中fine_per_day=undefined；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.206Z",
+          "end": "2026-11-03T02:09:38.215Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写每日罚金",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_borrow_count-0",
+      "steps": "PUT五项规则，其中max_borrow_count=0；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.224Z",
+          "end": "2026-11-03T02:09:38.233Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "同时借阅上限的范围为1—10",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_borrow_count-11",
+      "steps": "PUT五项规则，其中max_borrow_count=11；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.241Z",
+          "end": "2026-11-03T02:09:38.249Z",
+          "ms": 8,
+          "http": 200,
+          "code": 400,
+          "message": "同时借阅上限的范围为1—10",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_borrow_count-1.5",
+      "steps": "PUT五项规则，其中max_borrow_count=1.5；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.257Z",
+          "end": "2026-11-03T02:09:38.266Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "同时借阅上限须为整数",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_borrow_count-null",
+      "steps": "PUT五项规则，其中max_borrow_count=null；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.274Z",
+          "end": "2026-11-03T02:09:38.283Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写同时借阅上限",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F03-max_borrow_count-undefined",
+      "steps": "PUT五项规则，其中max_borrow_count=undefined；再读取",
+      "expected": "拒绝且五项不变",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.292Z",
+          "end": "2026-11-03T02:09:38.301Z",
+          "ms": 9,
+          "http": 200,
+          "code": 400,
+          "message": "请填写同时借阅上限",
+          "data": null
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-borrow_days-1",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.310Z",
+          "end": "2026-11-03T02:09:38.333Z",
+          "ms": 22,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "1",
+            "renew_days": "7",
+            "max_renew_count": "2",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "1",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-borrow_days-90",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.367Z",
+          "end": "2026-11-03T02:09:38.387Z",
+          "ms": 20,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "90",
+            "renew_days": "7",
+            "max_renew_count": "2",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "90",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-max_renew_count-0",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.414Z",
+          "end": "2026-11-03T02:09:38.435Z",
+          "ms": 20,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "7",
+            "max_renew_count": "0",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "0",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-max_renew_count-5",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.460Z",
+          "end": "2026-11-03T02:09:38.481Z",
+          "ms": 21,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "7",
+            "max_renew_count": "5",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "5",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-renew_days-1",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.509Z",
+          "end": "2026-11-03T02:09:38.529Z",
+          "ms": 19,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "1",
+            "max_renew_count": "2",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "1",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-renew_days-30",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.557Z",
+          "end": "2026-11-03T02:09:38.576Z",
+          "ms": 19,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "30",
+            "max_renew_count": "2",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "30",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-fine_per_day-0",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.601Z",
+          "end": "2026-11-03T02:09:38.621Z",
+          "ms": 20,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "7",
+            "max_renew_count": "2",
+            "fine_per_day": "0.00",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.00",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-fine_per_day-5.00",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.656Z",
+          "end": "2026-11-03T02:09:38.677Z",
+          "ms": 21,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "7",
+            "max_renew_count": "2",
+            "fine_per_day": "5.00",
+            "max_borrow_count": "3"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "5.00",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-max_borrow_count-1",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.709Z",
+          "end": "2026-11-03T02:09:38.731Z",
+          "ms": 21,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "7",
+            "max_renew_count": "2",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "1"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "1"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F04-max_borrow_count-10",
+      "steps": "PUT合法边界并重新读取",
+      "expected": "成功且一致",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:38.762Z",
+          "end": "2026-11-03T02:09:38.782Z",
+          "ms": 20,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "borrow_days": "30",
+            "renew_days": "7",
+            "max_renew_count": "2",
+            "fine_per_day": "0.50",
+            "max_borrow_count": "10"
+          }
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "10"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A01-reader",
+      "steps": "直接请求/statistics/overview",
+      "expected": "权限拒绝，不含业务数据",
+      "actual": {
+        "url": "/statistics/overview",
+        "method": "GET",
+        "start": "2026-11-03T02:09:38.813Z",
+        "end": "2026-11-03T02:09:38.817Z",
+        "ms": 5,
+        "http": 200,
+        "code": 403,
+        "message": "无权限访问",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A01-anon",
+      "steps": "直接请求/statistics/overview",
+      "expected": "权限拒绝，不含业务数据",
+      "actual": {
+        "url": "/statistics/overview",
+        "method": "GET",
+        "start": "2026-11-03T02:09:38.827Z",
+        "end": "2026-11-03T02:09:38.830Z",
+        "ms": 3,
+        "http": 200,
+        "code": 401,
+        "message": "未登录或登录已过期",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A01-invalid",
+      "steps": "直接请求/statistics/overview",
+      "expected": "权限拒绝，不含业务数据",
+      "actual": {
+        "url": "/statistics/overview",
+        "method": "GET",
+        "start": "2026-11-03T02:09:38.840Z",
+        "end": "2026-11-03T02:09:38.844Z",
+        "ms": 4,
+        "http": 200,
+        "code": 401,
+        "message": "无效的登录凭证",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A02-edit",
+      "steps": "直接请求/rules",
+      "expected": "权限拒绝，不含业务数据",
+      "actual": {
+        "url": "/rules",
+        "method": "PUT",
+        "start": "2026-11-03T02:09:38.853Z",
+        "end": "2026-11-03T02:09:38.857Z",
+        "ms": 4,
+        "http": 200,
+        "code": 403,
+        "message": "无权限访问",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A02-anon",
+      "steps": "直接请求/rules/latest",
+      "expected": "权限拒绝，不含业务数据",
+      "actual": {
+        "url": "/rules/latest",
+        "method": "GET",
+        "start": "2026-11-03T02:09:38.864Z",
+        "end": "2026-11-03T02:09:38.868Z",
+        "ms": 3,
+        "http": 200,
+        "code": 401,
+        "message": "未登录或登录已过期",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A02-admin-read",
+      "steps": "直接请求/rules",
+      "expected": "权限拒绝，不含业务数据",
+      "actual": {
+        "url": "/rules",
+        "method": "GET",
+        "start": "2026-11-03T02:09:38.875Z",
+        "end": "2026-11-03T02:09:38.881Z",
+        "ms": 5,
+        "http": 200,
+        "code": 403,
+        "message": "无权限访问",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B01",
+      "steps": "A下真实借出后改B，核对DB快照",
+      "expected": "30/2/7/0.50且到期+30天",
+      "actual": "30\t2\t7\t0.50\t30",
+      "status": "通过"
+    },
+    {
+      "id": "B02",
+      "steps": "当前B下续借A记录",
+      "expected": "旧快照续借7天且次数1",
+      "actual": {
+        "response": {
+          "url": "/borrows/118/renew",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:39.373Z",
+          "end": "2026-11-03T02:09:39.390Z",
+          "ms": 17,
+          "http": 200,
+          "code": 200,
+          "message": "续借成功",
+          "data": null
+        },
+        "row": "BORROWING\t1\t2026-12-10 10:09:39\t0.00\t0",
+        "delta": 37
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B03",
+      "steps": "A记录第三次续借",
+      "expected": "拒绝且记录不变",
+      "actual": {
+        "response": {
+          "url": "/borrows/118/renew",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:39.725Z",
+          "end": "2026-11-03T02:09:39.736Z",
+          "ms": 11,
+          "http": 200,
+          "code": 400,
+          "message": "已达最大续借次数（2次）",
+          "data": null
+        },
+        "before": "BORROWING\t2\t2026-12-17 10:09:39\t0.00\t0",
+        "after": "BORROWING\t2\t2026-12-17 10:09:39\t0.00\t0"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A03-renew",
+      "steps": "乙操作甲的借阅",
+      "expected": "403且记录不变",
+      "actual": {
+        "response": {
+          "url": "/borrows/118/renew",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:40.012Z",
+          "end": "2026-11-03T02:09:40.022Z",
+          "ms": 10,
+          "http": 200,
+          "code": 403,
+          "message": "只能续借自己的图书",
+          "data": null
+        },
+        "after": "BORROWING\t2\t2026-12-17 10:09:39\t0.00\t0"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "A03-return",
+      "steps": "乙操作甲的借阅",
+      "expected": "403且记录不变",
+      "actual": {
+        "response": {
+          "url": "/borrows/118/return",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:40.326Z",
+          "end": "2026-11-03T02:09:40.336Z",
+          "ms": 10,
+          "http": 200,
+          "code": 403,
+          "message": "只能归还自己的图书",
+          "data": null
+        },
+        "after": "BORROWING\t2\t2026-12-17 10:09:39\t0.00\t0"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B06",
+      "steps": "构造逾期2天，查询未还记录",
+      "expected": "逾期2天/暂计1元且DB最终金额未写入",
+      "actual": {
+        "record": {
+          "id": 118,
+          "userId": 6,
+          "bookId": 35,
+          "borrowTime": "2026-11-03T10:09:39",
+          "dueTime": "2026-11-01T00:00:00",
+          "returnTime": null,
+          "status": "BORROWING",
+          "renewCount": 2,
+          "borrowDaysSnapshot": 30,
+          "maxRenewCountSnapshot": 2,
+          "renewDaysSnapshot": 7,
+          "finePerDaySnapshot": 0.5,
+          "overdueDays": 2,
+          "fineAmount": 1,
+          "username": "rg_mw01v3wp_a",
+          "nickname": "回归读者a",
+          "bookTitle": "rg_mw01v3wp_book_1",
+          "bookAuthor": "回归夹具",
+          "categoryName": "rg_mw01v3wp_category",
+          "overdue": true,
+          "remainDays": -2
+        },
+        "db": "BORROWING\t2\t2026-11-01 00:00:00\t0.00\t0"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B07",
+      "steps": "当前日费1元，真实归还历史日费0.50的逾期2天记录",
+      "expected": "最终1元，库存恢复",
+      "actual": {
+        "response": {
+          "url": "/borrows/118/return",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:40.866Z",
+          "end": "2026-11-03T02:09:40.886Z",
+          "ms": 20,
+          "http": 200,
+          "code": 200,
+          "message": "归还成功",
+          "data": null
+        },
+        "db": "RETURNED\t2\t2026-11-01 00:00:00\t1.00\t2",
+        "stock": 5
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B08",
+      "steps": "再次改规则后读取已还记录",
+      "expected": "最终金额固定1元",
+      "actual": {
+        "id": 118,
+        "userId": 6,
+        "bookId": 35,
+        "borrowTime": "2026-11-03T10:09:39",
+        "dueTime": "2026-11-01T00:00:00",
+        "returnTime": "2026-11-03T10:09:41",
+        "status": "RETURNED",
+        "renewCount": 2,
+        "borrowDaysSnapshot": 30,
+        "maxRenewCountSnapshot": 2,
+        "renewDaysSnapshot": 7,
+        "finePerDaySnapshot": 0.5,
+        "overdueDays": 2,
+        "fineAmount": 1,
+        "username": "rg_mw01v3wp_a",
+        "nickname": "回归读者a",
+        "bookTitle": "rg_mw01v3wp_book_1",
+        "bookAuthor": "回归夹具",
+        "categoryName": "rg_mw01v3wp_category",
+        "overdue": false,
+        "remainDays": -2
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B-return-repeat",
+      "steps": "重复归还",
+      "expected": "拒绝且库存不变",
+      "actual": {
+        "response": {
+          "url": "/borrows/118/return",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:41.575Z",
+          "end": "2026-11-03T02:09:41.585Z",
+          "ms": 10,
+          "http": 200,
+          "code": 400,
+          "message": "该图书已归还",
+          "data": null
+        },
+        "db": "RETURNED\t2\t2026-11-01 00:00:00\t1.00\t2"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B03-zero",
+      "steps": "零续借快照首次续借",
+      "expected": "拒绝",
+      "actual": {
+        "url": "/borrows/119/renew",
+        "method": "PUT",
+        "start": "2026-11-03T02:09:42.215Z",
+        "end": "2026-11-03T02:09:42.227Z",
+        "ms": 11,
+        "http": 200,
+        "code": 400,
+        "message": "已达最大续借次数（0次）",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B09",
+      "steps": "零日费逾期2天查询并真实归还",
+      "expected": "仍逾期2天，最终0元",
+      "actual": {
+        "record": {
+          "id": 119,
+          "userId": 6,
+          "bookId": 36,
+          "borrowTime": "2026-11-03T10:09:42",
+          "dueTime": "2026-11-01T00:00:00",
+          "returnTime": null,
+          "status": "BORROWING",
+          "renewCount": 0,
+          "borrowDaysSnapshot": 30,
+          "maxRenewCountSnapshot": 0,
+          "renewDaysSnapshot": 7,
+          "finePerDaySnapshot": 0,
+          "overdueDays": 2,
+          "fineAmount": 0,
+          "username": "rg_mw01v3wp_a",
+          "nickname": "回归读者a",
+          "bookTitle": "rg_mw01v3wp_book_2",
+          "bookAuthor": "回归夹具",
+          "categoryName": "rg_mw01v3wp_category",
+          "overdue": true,
+          "remainDays": -2
+        },
+        "response": {
+          "url": "/borrows/119/return",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:42.335Z",
+          "end": "2026-11-03T02:09:42.358Z",
+          "ms": 23,
+          "http": 200,
+          "code": 200,
+          "message": "归还成功",
+          "data": null
+        },
+        "db": "RETURNED\t0\t2026-11-01 00:00:00\t0.00\t2"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "S03-start=2026-10-01",
+      "steps": "GET overview?start=2026-10-01",
+      "expected": "400",
+      "actual": {
+        "url": "/statistics/overview?start=2026-10-01",
+        "method": "GET",
+        "start": "2026-11-03T02:09:42.564Z",
+        "end": "2026-11-03T02:09:42.581Z",
+        "ms": 17,
+        "http": 200,
+        "code": 400,
+        "message": "起止日期须成对填写且开始日期不得晚于结束日期",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "S03-end=2026-10-31",
+      "steps": "GET overview?end=2026-10-31",
+      "expected": "400",
+      "actual": {
+        "url": "/statistics/overview?end=2026-10-31",
+        "method": "GET",
+        "start": "2026-11-03T02:09:42.582Z",
+        "end": "2026-11-03T02:09:42.589Z",
+        "ms": 7,
+        "http": 200,
+        "code": 400,
+        "message": "起止日期须成对填写且开始日期不得晚于结束日期",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "S03-start=2026-10-31&end=2026-10-01",
+      "steps": "GET overview?start=2026-10-31&end=2026-10-01",
+      "expected": "400",
+      "actual": {
+        "url": "/statistics/overview?start=2026-10-31&end=2026-10-01",
+        "method": "GET",
+        "start": "2026-11-03T02:09:42.593Z",
+        "end": "2026-11-03T02:09:42.601Z",
+        "ms": 9,
+        "http": 200,
+        "code": 400,
+        "message": "起止日期须成对填写且开始日期不得晚于结束日期",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "S03-start=bad&end=bad",
+      "steps": "GET overview?start=bad&end=bad",
+      "expected": "400",
+      "actual": {
+        "url": "/statistics/overview?start=bad&end=bad",
+        "method": "GET",
+        "start": "2026-11-03T02:09:42.607Z",
+        "end": "2026-11-03T02:09:42.625Z",
+        "ms": 18,
+        "http": 200,
+        "code": 500,
+        "message": "服务器内部错误，请稍后重试",
+        "data": null
+      },
+      "status": "失败"
+    },
+    {
+      "id": "S07-dashboard",
+      "steps": "有效管理员请求旧统计入口",
+      "expected": "404",
+      "actual": {
+        "url": "/statistics/dashboard",
+        "method": "GET",
+        "start": "2026-11-03T02:09:42.626Z",
+        "end": "2026-11-03T02:09:42.640Z",
+        "ms": 14,
+        "http": 200,
+        "code": 404,
+        "message": "请求的资源不存在",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "S07-category",
+      "steps": "有效管理员请求旧统计入口",
+      "expected": "404",
+      "actual": {
+        "url": "/statistics/category",
+        "method": "GET",
+        "start": "2026-11-03T02:09:42.642Z",
+        "end": "2026-11-03T02:09:42.649Z",
+        "ms": 7,
+        "http": 200,
+        "code": 404,
+        "message": "请求的资源不存在",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "S07-top-books",
+      "steps": "有效管理员请求旧统计入口",
+      "expected": "404",
+      "actual": {
+        "url": "/statistics/top-books",
+        "method": "GET",
+        "start": "2026-11-03T02:09:42.652Z",
+        "end": "2026-11-03T02:09:42.659Z",
+        "ms": 7,
+        "http": 200,
+        "code": 404,
+        "message": "请求的资源不存在",
+        "data": null
+      },
+      "status": "通过"
+    },
+    {
+      "id": "S02",
+      "steps": "查询2020年1月首尾边界夹具",
+      "expected": "该书次数2；零数据范围保留类别",
+      "actual": {
+        "range": {
+          "url": "/statistics/overview?start=2020-01-01&end=2020-01-31",
+          "method": "GET",
+          "start": "2026-11-03T02:09:43.744Z",
+          "end": "2026-11-03T02:09:43.789Z",
+          "ms": 45,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "topBooks": [
+              {
+                "bookId": 37,
+                "bookTitle": "rg_mw01v3wp_book_3",
+                "categoryName": "rg_mw01v3wp_category",
+                "borrowCount": 2
+              }
+            ],
+            "categoryStats": [
+              {
+                "categoryName": "rg_mw01v3wp_category",
+                "borrowCount": 2,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "计算机",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "教材",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "科幻",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "文学",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "历史",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "测试空分类",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "日期测试专用",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA排行A",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA排行B",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA排行零",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA日期边界",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA同名A",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA同名B",
+                "borrowCount": 0,
+                "overdueCount": 0
+              }
+            ],
+            "dashboard": {
+              "totalBooks": 37,
+              "totalStock": 109,
+              "borrowingCount": 4,
+              "overdueCount": 0,
+              "totalFine": 3.5,
+              "userCount": 6
+            }
+          }
+        },
+        "empty": {
+          "url": "/statistics/overview?start=1900-01-01&end=1900-01-01",
+          "method": "GET",
+          "start": "2026-11-03T02:09:43.789Z",
+          "end": "2026-11-03T02:09:43.821Z",
+          "ms": 33,
+          "http": 200,
+          "code": 200,
+          "message": "操作成功",
+          "data": {
+            "topBooks": [],
+            "categoryStats": [
+              {
+                "categoryName": "计算机",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "教材",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "科幻",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "文学",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "历史",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "测试空分类",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "日期测试专用",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA排行A",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA排行B",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA排行零",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA日期边界",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA同名A",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "QA同名B",
+                "borrowCount": 0,
+                "overdueCount": 0
+              },
+              {
+                "categoryName": "rg_mw01v3wp_category",
+                "borrowCount": 0,
+                "overdueCount": 0
+              }
+            ],
+            "dashboard": {
+              "totalBooks": 37,
+              "totalStock": 109,
+              "borrowingCount": 4,
+              "overdueCount": 0,
+              "totalFine": 3.5,
+              "userCount": 6
+            }
+          }
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "B04",
+      "steps": "乙借最后一本→甲预约→乙归还→改B→甲取书",
+      "expected": "READY转FULFILLED，新快照20/1/5/1且不重复扣库存",
+      "actual": {
+        "ready": "READY",
+        "response": {
+          "url": "/reservations/4/pickup",
+          "method": "PUT",
+          "start": "2026-11-03T02:09:44.480Z",
+          "end": "2026-11-03T02:09:44.502Z",
+          "ms": 22,
+          "http": 200,
+          "code": 200,
+          "message": "取书成功，已转为借阅",
+          "data": null
+        },
+        "snapshot": "20\t1\t5\t1.00",
+        "stock": 0
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-limit-1",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:45.501Z",
+            "end": "2026-11-03T02:09:46.039Z",
+            "ms": 538,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:45.501Z",
+            "end": "2026-11-03T02:09:46.039Z",
+            "ms": 538,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-limit-2",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:47.063Z",
+            "end": "2026-11-03T02:09:47.604Z",
+            "ms": 541,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:47.064Z",
+            "end": "2026-11-03T02:09:47.603Z",
+            "ms": 540,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-limit-3",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:48.588Z",
+            "end": "2026-11-03T02:09:49.137Z",
+            "ms": 549,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:48.588Z",
+            "end": "2026-11-03T02:09:49.138Z",
+            "ms": 550,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-limit-4",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:50.193Z",
+            "end": "2026-11-03T02:09:50.738Z",
+            "ms": 545,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:50.193Z",
+            "end": "2026-11-03T02:09:50.738Z",
+            "ms": 545,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-limit-5",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:51.816Z",
+            "end": "2026-11-03T02:09:52.357Z",
+            "ms": 541,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:51.817Z",
+            "end": "2026-11-03T02:09:52.357Z",
+            "ms": 540,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-duplicate-1",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:53.149Z",
+            "end": "2026-11-03T02:09:53.697Z",
+            "ms": 547,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:53.150Z",
+            "end": "2026-11-03T02:09:53.962Z",
+            "ms": 812,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-duplicate-2",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:54.818Z",
+            "end": "2026-11-03T02:09:55.361Z",
+            "ms": 543,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:54.818Z",
+            "end": "2026-11-03T02:09:55.372Z",
+            "ms": 554,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-duplicate-3",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:56.231Z",
+            "end": "2026-11-03T02:09:56.764Z",
+            "ms": 532,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:56.232Z",
+            "end": "2026-11-03T02:09:56.757Z",
+            "ms": 525,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-duplicate-4",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:57.617Z",
+            "end": "2026-11-03T02:09:58.156Z",
+            "ms": 540,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:57.617Z",
+            "end": "2026-11-03T02:09:58.143Z",
+            "ms": 526,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-duplicate-5",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:58.911Z",
+            "end": "2026-11-03T02:09:59.439Z",
+            "ms": 528,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:09:58.911Z",
+            "end": "2026-11-03T02:09:59.451Z",
+            "ms": 540,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 4,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-stock-1",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:00.321Z",
+            "end": "2026-11-03T02:10:00.861Z",
+            "ms": 541,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:00.321Z",
+            "end": "2026-11-03T02:10:00.855Z",
+            "ms": 534,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 0,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-stock-2",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:01.768Z",
+            "end": "2026-11-03T02:10:02.302Z",
+            "ms": 535,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:01.768Z",
+            "end": "2026-11-03T02:10:02.293Z",
+            "ms": 524,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 0,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-stock-3",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:03.075Z",
+            "end": "2026-11-03T02:10:03.605Z",
+            "ms": 530,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:03.075Z",
+            "end": "2026-11-03T02:10:03.614Z",
+            "ms": 539,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 0,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-stock-4",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:04.401Z",
+            "end": "2026-11-03T02:10:04.928Z",
+            "ms": 527,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:04.401Z",
+            "end": "2026-11-03T02:10:04.935Z",
+            "ms": 534,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 0,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-stock-5",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:05.833Z",
+            "end": "2026-11-03T02:10:06.377Z",
+            "ms": 544,
+            "http": 200,
+            "code": 500,
+            "message": "服务器内部错误，请稍后重试",
+            "data": null
+          },
+          {
+            "url": "/borrows",
+            "method": "POST",
+            "start": "2026-11-03T02:10:05.833Z",
+            "end": "2026-11-03T02:10:06.370Z",
+            "ms": 536,
+            "http": 200,
+            "code": 200,
+            "message": "借阅成功",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 0,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-renew-1",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/155/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:07.601Z",
+            "end": "2026-11-03T02:10:08.119Z",
+            "ms": 518,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/155/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:07.602Z",
+            "end": "2026-11-03T02:10:08.630Z",
+            "ms": 1029,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 5,
+        "record": "BORROWING\t3\t2026-12-10 10:10:07\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-renew-2",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/156/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:09.945Z",
+            "end": "2026-11-03T02:10:11.019Z",
+            "ms": 1074,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/156/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:09.945Z",
+            "end": "2026-11-03T02:10:10.492Z",
+            "ms": 546,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 5,
+        "record": "BORROWING\t3\t2026-12-10 10:10:09\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-renew-3",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/157/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:12.380Z",
+            "end": "2026-11-03T02:10:13.430Z",
+            "ms": 1050,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/157/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:12.380Z",
+            "end": "2026-11-03T02:10:12.919Z",
+            "ms": 539,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 5,
+        "record": "BORROWING\t3\t2026-12-10 10:10:12\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-renew-4",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/158/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:14.816Z",
+            "end": "2026-11-03T02:10:15.330Z",
+            "ms": 515,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/158/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:14.816Z",
+            "end": "2026-11-03T02:10:15.860Z",
+            "ms": 1043,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 5,
+        "record": "BORROWING\t3\t2026-12-10 10:10:14\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-renew-5",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/159/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:17.231Z",
+            "end": "2026-11-03T02:10:17.773Z",
+            "ms": 542,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/159/renew",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:17.232Z",
+            "end": "2026-11-03T02:10:18.283Z",
+            "ms": 1051,
+            "http": 200,
+            "code": 200,
+            "message": "续借成功",
+            "data": null
+          }
+        ],
+        "active": 1,
+        "count": 1,
+        "stock": 5,
+        "record": "BORROWING\t3\t2026-12-10 10:10:16\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-return-1",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/160/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:19.384Z",
+            "end": "2026-11-03T02:10:19.911Z",
+            "ms": 527,
+            "http": 200,
+            "code": 200,
+            "message": "归还成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/160/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:19.385Z",
+            "end": "2026-11-03T02:10:19.911Z",
+            "ms": 527,
+            "http": 200,
+            "code": 400,
+            "message": "归还失败",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 6,
+        "record": "RETURNED\t0\t2026-12-03 10:10:19\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-return-2",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/161/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:21.218Z",
+            "end": "2026-11-03T02:10:21.753Z",
+            "ms": 535,
+            "http": 200,
+            "code": 200,
+            "message": "归还成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/161/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:21.219Z",
+            "end": "2026-11-03T02:10:21.754Z",
+            "ms": 534,
+            "http": 200,
+            "code": 400,
+            "message": "归还失败",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 6,
+        "record": "RETURNED\t0\t2026-12-03 10:10:20\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-return-3",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/162/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:22.837Z",
+            "end": "2026-11-03T02:10:23.383Z",
+            "ms": 546,
+            "http": 200,
+            "code": 400,
+            "message": "归还失败",
+            "data": null
+          },
+          {
+            "url": "/borrows/162/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:22.837Z",
+            "end": "2026-11-03T02:10:23.382Z",
+            "ms": 545,
+            "http": 200,
+            "code": 200,
+            "message": "归还成功",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 6,
+        "record": "RETURNED\t0\t2026-12-03 10:10:22\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-return-4",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/163/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:24.428Z",
+            "end": "2026-11-03T02:10:24.968Z",
+            "ms": 540,
+            "http": 200,
+            "code": 200,
+            "message": "归还成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/163/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:24.428Z",
+            "end": "2026-11-03T02:10:24.969Z",
+            "ms": 541,
+            "http": 200,
+            "code": 400,
+            "message": "归还失败",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 6,
+        "record": "RETURNED\t0\t2026-12-03 10:10:24\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-return-5",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/borrows/164/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:26.114Z",
+            "end": "2026-11-03T02:10:26.665Z",
+            "ms": 551,
+            "http": 200,
+            "code": 200,
+            "message": "归还成功",
+            "data": null
+          },
+          {
+            "url": "/borrows/164/return",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:26.115Z",
+            "end": "2026-11-03T02:10:26.666Z",
+            "ms": 551,
+            "http": 200,
+            "code": 400,
+            "message": "归还失败",
+            "data": null
+          }
+        ],
+        "active": 0,
+        "count": 1,
+        "stock": 6,
+        "record": "RETURNED\t0\t2026-12-03 10:10:25\t0.00\t0",
+        "trigger": "测试库BEFORE UPDATE SLEEP(0.5)，已移除"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "C-pickup-1",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/reservations/5/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:27.715Z",
+            "end": "2026-11-03T02:10:28.269Z",
+            "ms": 554,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          },
+          {
+            "url": "/reservations/5/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:27.716Z",
+            "end": "2026-11-03T02:10:28.275Z",
+            "ms": 559,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 2,
+        "stock": 5,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-pickup-2",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/reservations/6/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:29.252Z",
+            "end": "2026-11-03T02:10:29.789Z",
+            "ms": 538,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          },
+          {
+            "url": "/reservations/6/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:29.252Z",
+            "end": "2026-11-03T02:10:29.786Z",
+            "ms": 534,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 2,
+        "stock": 5,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-pickup-3",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/reservations/7/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:30.832Z",
+            "end": "2026-11-03T02:10:31.374Z",
+            "ms": 543,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          },
+          {
+            "url": "/reservations/7/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:30.832Z",
+            "end": "2026-11-03T02:10:31.371Z",
+            "ms": 539,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 2,
+        "stock": 5,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-pickup-4",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/reservations/8/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:32.405Z",
+            "end": "2026-11-03T02:10:32.958Z",
+            "ms": 552,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          },
+          {
+            "url": "/reservations/8/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:32.406Z",
+            "end": "2026-11-03T02:10:32.960Z",
+            "ms": 555,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 2,
+        "stock": 5,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "C-pickup-5",
+      "steps": "受控触发器延迟0.5秒，Promise.all并行两请求；每轮重建夹具",
+      "expected": "名额/重复借阅/库存/续借/归还/取书保持一致",
+      "actual": {
+        "responses": [
+          {
+            "url": "/reservations/9/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:33.924Z",
+            "end": "2026-11-03T02:10:34.475Z",
+            "ms": 551,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          },
+          {
+            "url": "/reservations/9/pickup",
+            "method": "PUT",
+            "start": "2026-11-03T02:10:33.924Z",
+            "end": "2026-11-03T02:10:34.476Z",
+            "ms": 552,
+            "http": 200,
+            "code": 200,
+            "message": "取书成功，已转为借阅",
+            "data": null
+          }
+        ],
+        "active": 2,
+        "count": 2,
+        "stock": 5,
+        "record": null,
+        "trigger": "测试库BEFORE INSERT SLEEP(0.5)，已移除"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "R-borrow",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "error": "SQL执行失败（不输出连接凭据）：CREATE"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "R-return",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "error": "SQL执行失败（不输出连接凭据）：CREATE"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "R-pickup",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "error": "SQL执行失败（不输出连接凭据）：CREATE"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "R-rules",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "error": "SQL执行失败（不输出连接凭据）：CREATE"
+      },
+      "status": "失败"
+    },
+    {
+      "id": "RESTORE",
+      "steps": "恢复测试前五项规则",
+      "expected": "30/2/7/0.50/3",
+      "actual": {
+        "borrow_days": "30",
+        "renew_days": "7",
+        "max_renew_count": "2",
+        "fine_per_day": "0.50",
+        "max_borrow_count": "3"
+      },
+      "status": "通过"
+    }
+  ]
+}

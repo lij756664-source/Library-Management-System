@@ -1,17 +1,6 @@
 import request from './request'
 
-export function getDashboard() {
-  return request.get('/statistics/dashboard')
-}
-
-export function getCategoryStats() {
-  return request.get('/statistics/category')
-}
-
-export function getTopBooks(limit = 10) {
-  return request.get('/statistics/top-books', { params: { limit } })
-}
-
-export function getOverview() {
-  return request.get('/statistics/overview')
+// 统计页统一入口，日期参数只筛选分类和排行榜。
+export function getOverview(params = {}) {
+  return request.get('/statistics/overview', { params })
 }

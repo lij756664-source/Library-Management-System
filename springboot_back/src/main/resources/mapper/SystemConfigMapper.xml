@@ -13,4 +13,14 @@
         FROM system_config WHERE config_key = #{configKey}
     </select>
 
+    <!-- 仅整组保存时使用，普通规则查询不申请排他锁。 -->
+    <select id="lockRules" resultType="com.example.book.entity.SystemConfig">
+        SELECT * FROM system_config
+        WHERE config_key IN ('borrow_days', 'max_renew_count', 'renew_days', 'fine_per_day', 'max_borrow_count')
+        ORDER BY config_key FOR UPDATE
+    </select>
+
+    <update id="updateValue">
+        UPDATE system_config SET config_value = #{value} WHERE config_key = #{key}
+    </update>
 </mapper>

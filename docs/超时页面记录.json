@@ -1,0 +1,128 @@
+[
+  {
+    "at": "2026-11-01T12:27:20.987Z",
+    "mode": "normal",
+    "status": "",
+    "errors": []
+  },
+  {
+    "at": "2026-11-01T12:27:22.031Z",
+    "mode": "normal",
+    "status": "已重新查询当前有效规则",
+    "errors": []
+  },
+  {
+    "at": "2026-11-01T12:28:17.071Z",
+    "mode": "committed",
+    "status": "已重新查询当前有效规则",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:28:17.073Z",
+    "mode": "committed",
+    "status": "保存结果尚未确认，正在重新查询有效规则",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:28:17.093Z",
+    "mode": "committed",
+    "status": "已重新查询有效规则，请核对当前生效值；输入仍保留",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:28:20.493Z",
+    "mode": "committed",
+    "status": "已重新查询有效规则，请核对当前生效值；输入仍保留",
+    "errors": []
+  },
+  {
+    "at": "2026-11-01T12:29:10.015Z",
+    "mode": "not-committed",
+    "status": "已重新查询有效规则，请核对当前生效值；输入仍保留",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:29:10.017Z",
+    "mode": "not-committed",
+    "status": "保存结果尚未确认，正在重新查询有效规则",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:29:10.033Z",
+    "mode": "not-committed",
+    "status": "已重新查询有效规则，请核对当前生效值；输入仍保留",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:29:13.436Z",
+    "mode": "not-committed",
+    "status": "已重新查询有效规则，请核对当前生效值；输入仍保留",
+    "errors": []
+  },
+  {
+    "at": "2026-11-01T12:30:11.760Z",
+    "mode": "commit-query-fail",
+    "status": "已重新查询有效规则，请核对当前生效值；输入仍保留",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:30:11.762Z",
+    "mode": "commit-query-fail",
+    "status": "保存结果尚未确认，正在重新查询有效规则",
+    "errors": [
+      "timeout of 10000ms exceeded"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:30:11.777Z",
+    "mode": "commit-query-fail",
+    "status": "保存结果尚未确认，正在重新查询有效规则",
+    "errors": [
+      "timeout of 10000ms exceeded",
+      "Network Error"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:30:11.779Z",
+    "mode": "commit-query-fail",
+    "status": "保存结果尚未确认，请稍后重新查询有效规则",
+    "errors": [
+      "timeout of 10000ms exceeded",
+      "Network Error"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:30:15.197Z",
+    "mode": "commit-query-fail",
+    "status": "保存结果尚未确认，请稍后重新查询有效规则",
+    "errors": [
+      "Network Error"
+    ]
+  },
+  {
+    "at": "2026-11-01T12:30:15.198Z",
+    "mode": "commit-query-fail",
+    "status": "保存结果尚未确认，请稍后重新查询有效规则",
+    "errors": []
+  },
+  {
+    "at": "2026-11-01T12:30:56.960Z",
+    "mode": "normal",
+    "status": "已重新查询当前有效规则",
+    "errors": []
+  }
+]

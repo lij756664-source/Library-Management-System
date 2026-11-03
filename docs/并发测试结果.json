@@ -1,0 +1,86 @@
+{
+  "executedAt": "2026-11-01T12:10:01.336Z",
+  "iterations": 1,
+  "results": [
+    {
+      "name": "H01最后一个借阅名额",
+      "startedAt": "2026-11-01T12:09:59.737Z",
+      "observedLockWaiters": 2,
+      "responses": [
+        {
+          "code": 400,
+          "message": "已达最大借阅数量（3册）",
+          "completedAt": "2026-11-01T12:10:00.016Z"
+        },
+        {
+          "code": 200,
+          "message": "借阅成功",
+          "completedAt": "2026-11-01T12:10:00.015Z"
+        }
+      ],
+      "passed": true,
+      "activeCount": 3
+    },
+    {
+      "name": "H02最后一次续借",
+      "startedAt": "2026-11-01T12:10:00.180Z",
+      "observedLockWaiters": 2,
+      "responses": [
+        {
+          "code": 200,
+          "message": "续借成功",
+          "completedAt": "2026-11-01T12:10:00.446Z"
+        },
+        {
+          "code": 400,
+          "message": "已达最大续借次数（2次）",
+          "completedAt": "2026-11-01T12:10:00.447Z"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "H03重复归还",
+      "startedAt": "2026-11-01T12:10:00.589Z",
+      "observedLockWaiters": 2,
+      "responses": [
+        {
+          "code": 400,
+          "message": "该图书已归还",
+          "completedAt": "2026-11-01T12:10:00.866Z"
+        },
+        {
+          "code": 200,
+          "message": "归还成功",
+          "completedAt": "2026-11-01T12:10:00.865Z"
+        }
+      ],
+      "passed": true,
+      "finalStock": 1
+    },
+    {
+      "name": "H04改规则与借出",
+      "startedAt": "2026-11-01T12:10:01.044Z",
+      "observedLockWaiters": 2,
+      "responses": [
+        {
+          "code": 200,
+          "message": "操作成功",
+          "completedAt": "2026-11-01T12:10:01.310Z"
+        },
+        {
+          "code": 200,
+          "message": "借阅成功",
+          "completedAt": "2026-11-01T12:10:01.303Z"
+        }
+      ],
+      "passed": true,
+      "snapshot": [
+        3,
+        2,
+        7,
+        0.5
+      ]
+    }
+  ]
+}

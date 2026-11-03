@@ -1,9 +1,6 @@
 package com.example.book.mapper;
 
 import com.example.book.entity.BorrowRecord;
-import com.example.book.vo.BookStatVO;
-import com.example.book.vo.CategoryStatVO;
-import com.example.book.vo.DashboardVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,6 +17,8 @@ public interface BorrowMapper {
 
     int countByBookId(@Param("bookId") Integer bookId);
 
+    int countActiveByBookId(@Param("bookId") Integer bookId);
+
     int updateRenew(@Param("id") Integer id, @Param("dueTime") java.time.LocalDateTime dueTime);
 
     int updateReturn(BorrowRecord record);
@@ -29,10 +28,4 @@ public interface BorrowMapper {
                                    @Param("keyword") String keyword);
 
     List<BorrowRecord> findAllWithDetail(@Param("keyword") String keyword, @Param("status") String status);
-
-    DashboardVO getDashboardStats();
-
-    List<CategoryStatVO> statByCategory();
-
-    List<BookStatVO> statTopBooks(@Param("limit") int limit);
 }

@@ -10,9 +10,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDate;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,6 +35,15 @@ public class GlobalExceptionHandler {
             message = ex.getBindingResult().getFieldError().getDefaultMessage();
         }
         return Result.error(400, message);
+    }
+
+    // 请求参数在进入Controller前转换失败，属于输入错误，不应落入500兜底。
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public Result<Void> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        if (LocalDate.class.equals(e.getRequiredType())) {
+            return Result.error(400, "日期格式不正确，请使用年-月-日，例如2026-11-03");
+        }
+        return Result.error(400, "请求参数格式不正确，请检查后重试");
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)

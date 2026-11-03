@@ -1,0 +1,7 @@
+{
+  "borrow_days": "30",
+  "renew_days": "7",
+  "max_renew_count": "2",
+  "fine_per_day": "0.50",
+  "max_borrow_count": "3"
+}

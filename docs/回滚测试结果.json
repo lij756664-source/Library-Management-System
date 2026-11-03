@@ -1,0 +1,25 @@
+{
+  "executedAt": "2026-11-01T12:11:32.691Z",
+  "results": [
+    {
+      "name": "G01第三项规则写入失败",
+      "passed": true,
+      "responseCode": 500,
+      "allRulesUnchanged": true
+    },
+    {
+      "name": "G05归还记录保存失败",
+      "passed": true,
+      "responseCode": 500,
+      "state": "BORROWING\tNULL\t0\t0.00",
+      "stock": 0
+    },
+    {
+      "name": "G06归还后库存回补失败",
+      "passed": true,
+      "responseCode": 500,
+      "state": "BORROWING\tNULL\t0\t0.00",
+      "stock": 0
+    }
+  ]
+}

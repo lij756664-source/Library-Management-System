@@ -35,3 +35,20 @@ springboot_back/.vscode/
 
 # 头像上传目录（运行时生成）
 springboot_back/uploads/
+
+# 本机数据库连接配置
+springboot_back/src/main/resources/application-local.yml
+
+# Maven build output and local configuration
+springboot_back/target/
+springboot_back/src/main/resources/application-local.yaml
+.env
+.env.local
+.pnpm-store/
+
+# Local database backups and private connection configuration copies
+local-backups/
+
+# Local QA launchers, logs, process IDs and generated personal documents
+/tmp/
+/output/

@@ -19,3 +19,7 @@ export function updateBook(id, data) {
 export function deleteBook(id) {
   return request.delete(`/books/${id}`)
 }
+
+export function adjustBookStock(id, delta) {
+  return request.put(`/books/${id}/stock`, { delta })
+}

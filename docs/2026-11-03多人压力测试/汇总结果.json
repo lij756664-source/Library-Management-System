@@ -1,0 +1,377 @@
+{
+  "date": "2026-11-03",
+  "passed": true,
+  "thresholds": {
+    "users": 10,
+    "durationSeconds": 300,
+    "p95Ms": 2000,
+    "successRate": 1,
+    "correctnessRate": 1,
+    "browserSamples": 10,
+    "browserMaxMs": 3000
+  },
+  "phases": [
+    {
+      "name": "ramp-5",
+      "total": 28,
+      "success": 28,
+      "incorrect": 0,
+      "failures": 0,
+      "p50Ms": 321.91,
+      "p95Ms": 396.05,
+      "p99Ms": 425.43,
+      "maxMs": 425.43,
+      "perRange": [
+        {
+          "range": "全部历史",
+          "total": 6,
+          "p95Ms": 425.43,
+          "maxMs": 425.43
+        },
+        {
+          "range": "跨12个月",
+          "total": 5,
+          "p95Ms": 374.84,
+          "maxMs": 374.84
+        },
+        {
+          "range": "单月",
+          "total": 6,
+          "p95Ms": 330.84,
+          "maxMs": 330.84
+        },
+        {
+          "range": "单日",
+          "total": 6,
+          "p95Ms": 342.74,
+          "maxMs": 342.74
+        },
+        {
+          "range": "无数据",
+          "total": 5,
+          "p95Ms": 390.26,
+          "maxMs": 390.26
+        }
+      ],
+      "users": 5,
+      "startedAt": "2026-11-03T02:52:27.990Z",
+      "endedAt": "2026-11-03T02:52:48.000Z",
+      "durationSeconds": 20.01,
+      "throughputPerSecond": 1.399
+    },
+    {
+      "name": "acceptance-10",
+      "total": 775,
+      "success": 775,
+      "incorrect": 0,
+      "failures": 0,
+      "p50Ms": 304.92,
+      "p95Ms": 560.66,
+      "p99Ms": 872.23,
+      "maxMs": 1211.45,
+      "perRange": [
+        {
+          "range": "全部历史",
+          "total": 155,
+          "p95Ms": 592.19,
+          "maxMs": 982.01
+        },
+        {
+          "range": "跨12个月",
+          "total": 154,
+          "p95Ms": 609.72,
+          "maxMs": 1013.92
+        },
+        {
+          "range": "单月",
+          "total": 155,
+          "p95Ms": 534.2,
+          "maxMs": 878.03
+        },
+        {
+          "range": "单日",
+          "total": 156,
+          "p95Ms": 466.29,
+          "maxMs": 917.33
+        },
+        {
+          "range": "无数据",
+          "total": 155,
+          "p95Ms": 428.5,
+          "maxMs": 1211.45
+        }
+      ],
+      "users": 10,
+      "startedAt": "2026-11-03T02:52:48.004Z",
+      "endedAt": "2026-11-03T02:57:48.014Z",
+      "durationSeconds": 300.01,
+      "throughputPerSecond": 2.583
+    },
+    {
+      "name": "explore-20",
+      "total": 627,
+      "success": 627,
+      "incorrect": 0,
+      "failures": 0,
+      "p50Ms": 339.75,
+      "p95Ms": 685.23,
+      "p99Ms": 1535.24,
+      "maxMs": 1889.68,
+      "perRange": [
+        {
+          "range": "全部历史",
+          "total": 125,
+          "p95Ms": 741.63,
+          "maxMs": 1889.68
+        },
+        {
+          "range": "跨12个月",
+          "total": 127,
+          "p95Ms": 693.21,
+          "maxMs": 1845.8
+        },
+        {
+          "range": "单月",
+          "total": 127,
+          "p95Ms": 622.74,
+          "maxMs": 1043.63
+        },
+        {
+          "range": "单日",
+          "total": 125,
+          "p95Ms": 659.97,
+          "maxMs": 1737.04
+        },
+        {
+          "range": "无数据",
+          "total": 123,
+          "p95Ms": 677.21,
+          "maxMs": 1880.26
+        }
+      ],
+      "users": 20,
+      "startedAt": "2026-11-03T02:57:48.015Z",
+      "endedAt": "2026-11-03T02:59:48.140Z",
+      "durationSeconds": 120.125,
+      "throughputPerSecond": 5.22
+    }
+  ],
+  "pageChecks": [
+    {
+      "sequence": 1,
+      "range": "全部历史",
+      "ms": 984.9,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 2,
+      "range": "全部历史",
+      "ms": 696.7,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 3,
+      "range": "跨12个月",
+      "ms": 827.1,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 4,
+      "range": "跨12个月",
+      "ms": 930.1,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 5,
+      "range": "单月",
+      "ms": 651.8,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 6,
+      "range": "单月",
+      "ms": 714,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 7,
+      "range": "单日",
+      "ms": 747.1,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 8,
+      "range": "单日",
+      "ms": 682.7,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 9,
+      "range": "无数据",
+      "ms": 632.1,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    },
+    {
+      "sequence": 10,
+      "range": "无数据",
+      "ms": 569.5,
+      "countsCorrect": true,
+      "sectorsCorrect": true,
+      "percentagesCorrect": true,
+      "withinLimit": true,
+      "success": true,
+      "noErrors": true,
+      "rendered": true
+    }
+  ],
+  "pageMaxMs": 984.9,
+  "recovery": [
+    {
+      "phase": "recovery",
+      "user": "load_mw03e2b9_1",
+      "range": "全部历史",
+      "startedAt": "2026-11-03T02:59:48.141Z",
+      "endedAt": "2026-11-03T02:59:48.458Z",
+      "ms": 317.29,
+      "http": 200,
+      "code": 200,
+      "correct": true,
+      "success": true
+    },
+    {
+      "phase": "recovery",
+      "user": "load_mw03e2b9_1",
+      "range": "跨12个月",
+      "startedAt": "2026-11-03T02:59:48.459Z",
+      "endedAt": "2026-11-03T02:59:48.740Z",
+      "ms": 280.64,
+      "http": 200,
+      "code": 200,
+      "correct": true,
+      "success": true
+    },
+    {
+      "phase": "recovery",
+      "user": "load_mw03e2b9_1",
+      "range": "单月",
+      "startedAt": "2026-11-03T02:59:48.741Z",
+      "endedAt": "2026-11-03T02:59:49.062Z",
+      "ms": 320.95,
+      "http": 200,
+      "code": 200,
+      "correct": true,
+      "success": true
+    },
+    {
+      "phase": "recovery",
+      "user": "load_mw03e2b9_1",
+      "range": "单日",
+      "startedAt": "2026-11-03T02:59:49.063Z",
+      "endedAt": "2026-11-03T02:59:49.458Z",
+      "ms": 395,
+      "http": 200,
+      "code": 200,
+      "correct": true,
+      "success": true
+    },
+    {
+      "phase": "recovery",
+      "user": "load_mw03e2b9_1",
+      "range": "无数据",
+      "startedAt": "2026-11-03T02:59:49.459Z",
+      "endedAt": "2026-11-03T02:59:49.763Z",
+      "ms": 303.38,
+      "http": 200,
+      "code": 200,
+      "correct": true,
+      "success": true
+    }
+  ],
+  "resources": [
+    {
+      "name": "java",
+      "samples": 25,
+      "maxCpuPercentOfMachine": 2.54,
+      "maxWorkingSetMiB": 1213.9,
+      "maxPrivateMiB": 1397.6
+    },
+    {
+      "name": "mysqld",
+      "samples": 50,
+      "maxCpuPercentOfMachine": 7.57,
+      "maxWorkingSetMiB": 47.6,
+      "maxPrivateMiB": 759.3
+    }
+  ],
+  "environment": {
+    "cpu": "Intel(R) Core(TM) Ultra 5 125H",
+    "memoryGiB": 32,
+    "logicalProcessors": 18,
+    "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+    "viewport": {
+      "width": 1440,
+      "height": 960
+    },
+    "buildSha256": "021e4e4293ea54949a96c52b23bc277890a103eddc839a61031397ffd3f8b141"
+  },
+  "notes": [
+    "20人仅为摸底，不纳入正式验收判定",
+    "10名压力用户之外，浏览器抽查会额外增加查询请求",
+    "响应耗时包含fetch返回及JSON解析和正确性比对；仅有效管理员合法查询计入压力场景",
+    "每个用户完成请求后等待2—5秒，属于封闭用户模型，不代表固定RPS或容量极限"
+  ]
+}

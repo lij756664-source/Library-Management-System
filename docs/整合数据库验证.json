@@ -1,0 +1,13 @@
+{
+  "testedAt": "2026-11-02T01:33:58.031Z",
+  "freshDatabase": "book_db_integration_20261102c",
+  "migratedDatabase": "book_db_migration_20261102",
+  "checks": {
+    "book_db_integration_20261102cLocation": true,
+    "book_db_migration_20261102Location": true,
+    "freshFinePrecision": true,
+    "oldFinalFinePreserved": true,
+    "oldSnapshotsPreserved": true
+  },
+  "passed": true
+}

@@ -62,6 +62,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const allMenus = [
+  { path: '/rules', title: '规则设置', icon: 'Setting', roles: ['ADMIN'] },
   { path: '/browse', title: '图书查询', icon: 'Search', roles: ['ADMIN', 'USER'] },
   { path: '/my-borrows', title: '我的借阅', icon: 'Notebook', roles: ['ADMIN', 'USER'] },
   { path: '/my-reservations', title: '我的预约', icon: 'Ticket', roles: ['ADMIN', 'USER'] },

@@ -1,0 +1,500 @@
+{
+  "at": "2026-11-01T12:25:58.759Z",
+  "environment": {
+    "cpu": "Intel(R) Core(TM) Ultra 5 125H",
+    "memoryGiB": 32,
+    "os": "Windows_NT 10.0.26200",
+    "node": "v24.22.1",
+    "java": "17.0.20.1",
+    "application": "Spring Boot 3.2.5",
+    "browser": "Codex in-app Chromium browser; exact version not obtained",
+    "deployment": "same host; static production build+local HTTP test proxy; backend 8081; MySQL separate schema",
+    "note": "original 8080 service also running, no deliberate heavy parallel workload; instrumentation waits two animation frames and loading opacity zero"
+  },
+  "firstDiagnostic": [
+    {
+      "sequence": 1,
+      "start": "",
+      "end": "",
+      "ms": 616.6,
+      "httpStatus": 200,
+      "categories": [
+        [
+          "性能类别1",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别2",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别3",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别4",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别5",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别6",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别7",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别8",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别9",
+          "1000",
+          "20"
+        ],
+        [
+          "性能类别10",
+          "1000",
+          "20"
+        ]
+      ],
+      "top": [
+        [
+          "性能图书18",
+          "性能类别8",
+          "12"
+        ],
+        [
+          "性能图书55",
+          "性能类别5",
+          "12"
+        ],
+        [
+          "性能图书131",
+          "性能类别1",
+          "12"
+        ],
+        [
+          "性能图书168",
+          "性能类别8",
+          "12"
+        ],
+        [
+          "性能图书205",
+          "性能类别5",
+          "12"
+        ],
+        [
+          "性能图书209",
+          "性能类别9",
+          "12"
+        ],
+        [
+          "性能图书242",
+          "性能类别2",
+          "12"
+        ],
+        [
+          "性能图书246",
+          "性能类别6",
+          "12"
+        ],
+        [
+          "性能图书279",
+          "性能类别9",
+          "12"
+        ],
+        [
+          "性能图书283",
+          "性能类别3",
+          "12"
+        ]
+      ],
+      "errors": [],
+      "loading": true
+    }
+  ],
+  "mountDiagnostic": {
+    "sequence": 1,
+    "start": "",
+    "end": "",
+    "ms": 691.9,
+    "httpStatus": 200,
+    "categories": [
+      [
+        "性能类别1",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别2",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别3",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别4",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别5",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别6",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别7",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别8",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别9",
+        "1000",
+        "20"
+      ],
+      [
+        "性能类别10",
+        "1000",
+        "20"
+      ]
+    ],
+    "top": [
+      [
+        "性能图书18",
+        "性能类别8",
+        "12"
+      ],
+      [
+        "性能图书55",
+        "性能类别5",
+        "12"
+      ],
+      [
+        "性能图书131",
+        "性能类别1",
+        "12"
+      ],
+      [
+        "性能图书168",
+        "性能类别8",
+        "12"
+      ],
+      [
+        "性能图书205",
+        "性能类别5",
+        "12"
+      ],
+      [
+        "性能图书209",
+        "性能类别9",
+        "12"
+      ],
+      [
+        "性能图书242",
+        "性能类别2",
+        "12"
+      ],
+      [
+        "性能图书246",
+        "性能类别6",
+        "12"
+      ],
+      [
+        "性能图书279",
+        "性能类别9",
+        "12"
+      ],
+      [
+        "性能图书283",
+        "性能类别3",
+        "12"
+      ]
+    ],
+    "errors": [],
+    "loading": false
+  },
+  "scale": {
+    "books": 1000,
+    "totalCopies": 3000,
+    "available": 2000,
+    "categories": 10,
+    "readers": 500,
+    "borrows": 10000,
+    "active": 1000,
+    "overdueActive": 200
+  },
+  "groups": [
+    {
+      "name": "全部历史",
+      "start": "",
+      "end": "",
+      "checks": [
+        {
+          "sequence": 2,
+          "ms": 715.8,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 3,
+          "ms": 699.6,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 4,
+          "ms": 682.8,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 5,
+          "ms": 665.7,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 6,
+          "ms": 665.8,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        }
+      ],
+      "maxMs": 715.8,
+      "passed": true
+    },
+    {
+      "name": "跨12个月",
+      "start": "2024-01-01",
+      "end": "2024-12-31",
+      "checks": [
+        {
+          "sequence": 7,
+          "ms": 682.4,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 8,
+          "ms": 699.5,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 9,
+          "ms": 682.4,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 10,
+          "ms": 666.2,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 11,
+          "ms": 649.3,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        }
+      ],
+      "maxMs": 699.5,
+      "passed": true
+    },
+    {
+      "name": "单月",
+      "start": "2024-02-01",
+      "end": "2024-02-29",
+      "checks": [
+        {
+          "sequence": 12,
+          "ms": 596.4,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 13,
+          "ms": 599.4,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 14,
+          "ms": 599.5,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 15,
+          "ms": 582.7,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 16,
+          "ms": 633.3,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        }
+      ],
+      "maxMs": 633.3,
+      "passed": true
+    },
+    {
+      "name": "单日",
+      "start": "2024-01-01",
+      "end": "2024-01-01",
+      "checks": [
+        {
+          "sequence": 17,
+          "ms": 598.8,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 18,
+          "ms": 566.1,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 19,
+          "ms": 616.5,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 20,
+          "ms": 599.7,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 21,
+          "ms": 582.9,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        }
+      ],
+      "maxMs": 616.5,
+      "passed": true
+    },
+    {
+      "name": "无数据",
+      "start": "2000-01-01",
+      "end": "2000-01-01",
+      "checks": [
+        {
+          "sequence": 22,
+          "ms": 515,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 23,
+          "ms": 549.5,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 24,
+          "ms": 516.4,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 25,
+          "ms": 516.1,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        },
+        {
+          "sequence": 26,
+          "ms": 499.1,
+          "httpOk": true,
+          "noErrors": true,
+          "displayComplete": true,
+          "correct": true
+        }
+      ],
+      "maxMs": 549.5,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,434 @@
+{
+  "createdAt": "2026-11-01T12:18:09.812Z",
+  "scale": {
+    "books": 1000,
+    "totalCopies": 3000,
+    "available": 2000,
+    "categories": 10,
+    "readers": 500,
+    "borrows": 10000,
+    "active": 1000,
+    "overdueActive": 200
+  },
+  "ranges": [
+    {
+      "name": "全部历史",
+      "start": "",
+      "end": "",
+      "expected": {
+        "total": 10000,
+        "top": [
+          {
+            "bookTitle": "性能图书18",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书55",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书131",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书168",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书205",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书209",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书242",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书246",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书279",
+            "borrowCount": 12
+          },
+          {
+            "bookTitle": "性能图书283",
+            "borrowCount": 12
+          }
+        ],
+        "categories": [
+          {
+            "categoryName": "性能类别1",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别2",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别3",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别4",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别5",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别6",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别7",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别8",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别9",
+            "borrowCount": 1000
+          },
+          {
+            "categoryName": "性能类别10",
+            "borrowCount": 1000
+          }
+        ]
+      }
+    },
+    {
+      "name": "跨12个月",
+      "start": "2024-01-01",
+      "end": "2024-12-31",
+      "expected": {
+        "total": 4929,
+        "top": [
+          {
+            "bookTitle": "性能图书21",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书24",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书25",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书57",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书58",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书61",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书62",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书94",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书95",
+            "borrowCount": 7
+          },
+          {
+            "bookTitle": "性能图书98",
+            "borrowCount": 7
+          }
+        ],
+        "categories": [
+          {
+            "categoryName": "性能类别1",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别2",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别3",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别4",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别5",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别6",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别7",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别8",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别9",
+            "borrowCount": 493
+          },
+          {
+            "categoryName": "性能类别10",
+            "borrowCount": 492
+          }
+        ]
+      }
+    },
+    {
+      "name": "单月",
+      "start": "2024-02-01",
+      "end": "2024-02-29",
+      "expected": {
+        "total": 500,
+        "top": [
+          {
+            "bookTitle": "性能图书15",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书16",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书17",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书18",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书19",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书20",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书21",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书22",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书23",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书24",
+            "borrowCount": 1
+          }
+        ],
+        "categories": [
+          {
+            "categoryName": "性能类别1",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别2",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别3",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别4",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别5",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别6",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别7",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别8",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别9",
+            "borrowCount": 50
+          },
+          {
+            "categoryName": "性能类别10",
+            "borrowCount": 50
+          }
+        ]
+      }
+    },
+    {
+      "name": "单日",
+      "start": "2024-01-01",
+      "end": "2024-01-01",
+      "expected": {
+        "total": 72,
+        "top": [
+          {
+            "bookTitle": "性能图书1",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书23",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书30",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书37",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书59",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书66",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书73",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书95",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书102",
+            "borrowCount": 1
+          },
+          {
+            "bookTitle": "性能图书109",
+            "borrowCount": 1
+          }
+        ],
+        "categories": [
+          {
+            "categoryName": "性能类别1",
+            "borrowCount": 8
+          },
+          {
+            "categoryName": "性能类别10",
+            "borrowCount": 8
+          },
+          {
+            "categoryName": "性能类别2",
+            "borrowCount": 7
+          },
+          {
+            "categoryName": "性能类别3",
+            "borrowCount": 7
+          },
+          {
+            "categoryName": "性能类别4",
+            "borrowCount": 7
+          },
+          {
+            "categoryName": "性能类别5",
+            "borrowCount": 7
+          },
+          {
+            "categoryName": "性能类别6",
+            "borrowCount": 7
+          },
+          {
+            "categoryName": "性能类别7",
+            "borrowCount": 7
+          },
+          {
+            "categoryName": "性能类别8",
+            "borrowCount": 7
+          },
+          {
+            "categoryName": "性能类别9",
+            "borrowCount": 7
+          }
+        ]
+      }
+    },
+    {
+      "name": "无数据",
+      "start": "2000-01-01",
+      "end": "2000-01-01",
+      "expected": {
+        "total": 0,
+        "top": [],
+        "categories": [
+          {
+            "categoryName": "性能类别1",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别2",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别3",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别4",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别5",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别6",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别7",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别8",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别9",
+            "borrowCount": 0
+          },
+          {
+            "categoryName": "性能类别10",
+            "borrowCount": 0
+          }
+        ]
+      }
+    }
+  ]
+}

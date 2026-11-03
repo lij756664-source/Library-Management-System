@@ -126,7 +126,6 @@ class BookServiceImplTest {
     void addShouldRejectInvalidIsbnFormat() {
         Book book = validBook();
         book.setIsbn("abc123");
-        when(categoryMapper.findById(1)).thenReturn(category(1));
 
         BusinessException e = assertThrows(BusinessException.class, () -> bookService.add(book));
         assertTrue(e.getMessage().contains("ISBN"));
