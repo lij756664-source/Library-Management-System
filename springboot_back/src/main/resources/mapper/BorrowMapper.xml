@@ -58,6 +58,11 @@
         SELECT COUNT(*) FROM borrow_record WHERE book_id = #{bookId}
     </select>
 
+    <select id="countActiveByBookId" resultType="int">
+        SELECT COUNT(*) FROM borrow_record
+        WHERE book_id = #{bookId} AND status = 'BORROWING'
+    </select>
+
     <!-- 续借：延长应还时间，续借次数 +1，仅借阅中可更新 -->
     <update id="updateRenew">
         UPDATE borrow_record

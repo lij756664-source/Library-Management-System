@@ -140,6 +140,8 @@ const handleLogin = async () => {
     authStore.setAuth(res.data.token, res.data.user)
     ElMessage.success('登录成功，欢迎回来')
     router.push(res.data.user.role === 'ADMIN' ? '/books' : '/browse')
+  } catch {
+    // 失败提示已由 request 拦截器弹出，这里只避免未处理的 Promise 报错
   } finally {
     loading.value = false
   }

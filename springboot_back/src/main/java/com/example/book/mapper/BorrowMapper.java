@@ -23,6 +23,9 @@ public interface BorrowMapper {
 
     int countByBookId(@Param("bookId") Integer bookId);
 
+    /** 该书当前未归还的借阅数（下架前校验） */
+    int countActiveByBookId(@Param("bookId") Integer bookId);
+
     /** 续借：更新应还时间 */
     int updateRenew(@Param("id") Integer id, @Param("dueTime") java.time.LocalDateTime dueTime);
 
