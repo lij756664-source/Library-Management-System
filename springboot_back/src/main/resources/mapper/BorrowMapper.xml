@@ -7,6 +7,8 @@
         SELECT br.id, br.user_id AS userId, br.book_id AS bookId,
                br.borrow_time AS borrowTime, br.due_time AS dueTime,
                br.return_time AS returnTime, br.status, br.renew_count AS renewCount,
+               br.borrow_days_snapshot, br.max_renew_count_snapshot,
+               br.renew_days_snapshot, br.fine_per_day_snapshot,
                CASE
                    WHEN br.status = 'BORROWING' AND br.due_time &lt; NOW() THEN
                        GREATEST(DATEDIFF(DATE(NOW()), DATE(br.due_time)), 1)
@@ -16,8 +18,7 @@
                    WHEN br.status = 'RETURNED' THEN br.fine_amount
                    WHEN br.status = 'BORROWING' AND br.due_time &lt; NOW() THEN
                        GREATEST(DATEDIFF(DATE(NOW()), DATE(br.due_time)), 1) *
-                       IFNULL((SELECT CAST(config_value AS DECIMAL(10, 2))
-                               FROM system_config WHERE config_key = 'fine_per_day' LIMIT 1), 0.5)
+                       br.fine_per_day_snapshot
                    ELSE 0
                END AS fineAmount,
                u.username, u.nickname,
@@ -33,8 +34,10 @@
 
     <!-- 新增借阅记录；刚借时逾期天数和罚款为 0 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO borrow_record (user_id, book_id, borrow_time, due_time, status, renew_count, overdue_days, fine_amount)
-        VALUES (#{userId}, #{bookId}, #{borrowTime}, #{dueTime}, #{status}, #{renewCount}, 0, 0)
+        INSERT INTO borrow_record (user_id, book_id, borrow_time, due_time, status, renew_count, overdue_days, fine_amount,
+                                   borrow_days_snapshot, max_renew_count_snapshot, renew_days_snapshot, fine_per_day_snapshot)
+        VALUES (#{userId}, #{bookId}, #{borrowTime}, #{dueTime}, #{status}, #{renewCount}, 0, 0,
+                #{borrowDaysSnapshot}, #{maxRenewCountSnapshot}, #{renewDaysSnapshot}, #{finePerDaySnapshot})
     </insert>
 
     <select id="findById" resultType="com.example.book.entity.BorrowRecord">
