@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-03",
+  "mysql": "8.0.43",
+  "scale": "1000\t2000\t10000\t1000\t200\t500",
+  "indexes": "borrow_record\t0\tPRIMARY\t1\tid\tA\t9931\tNULL\tNULL\t\tBTREE\t\t\tYES\tNULL\r\nborrow_record\t1\tidx_user_id\t1\tuser_id\tA\t500\tNULL\tNULL\t\tBTREE\t\t\tYES\tNULL\r\nborrow_record\t1\tidx_book_id\t1\tbook_id\tA\t1000\tNULL\tNULL\t\tBTREE\t\t\tYES\tNULL\r\nborrow_record\t1\tidx_status\t1\tstatus\tA\t2\tNULL\tNULL\t\tBTREE\t\t\tYES\tNULL\r\nborrow_record\t1\tidx_due_time\t1\tdue_time\tA\t128\tNULL\tNULL\t\tBTREE\t\t\tYES\tNULL",
+  "sourceCounts": "34\t114\t5\t3",
+  "defaultConfigUnchanged": true,
+  "fixedDateError": {
+    "http": 200,
+    "code": 400,
+    "message": "日期格式不正确，请使用年-月-日，例如2026-11-03",
+    "data": null
+  },
+  "browserErrors": []
+}

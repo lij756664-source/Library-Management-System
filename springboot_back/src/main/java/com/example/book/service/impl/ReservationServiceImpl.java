@@ -10,27 +10,32 @@ import com.example.book.mapper.BorrowMapper;
 import com.example.book.mapper.ReservationMapper;
 import com.example.book.mapper.SystemConfigMapper;
 import com.example.book.service.IReservationService;
+import com.example.book.service.IRuleService;
+import com.example.book.service.IFineService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReservationServiceImpl implements IReservationService {
 
     private final ReservationMapper reservationMapper;
     private final BookMapper bookMapper;
-    private final com.example.book.service.RuleService ruleService;
-    private final com.example.book.service.FineService fineService;
+    private final IRuleService ruleService;
+    private final IFineService fineService;
     private final BorrowMapper borrowMapper;
     private final SystemConfigMapper systemConfigMapper;
 
     public ReservationServiceImpl(ReservationMapper reservationMapper, BookMapper bookMapper,
-                                  BorrowMapper borrowMapper, SystemConfigMapper systemConfigMapper, com.example.book.service.RuleService ruleService, com.example.book.service.FineService fineService) {
+                                  BorrowMapper borrowMapper, SystemConfigMapper systemConfigMapper,
+                                  IRuleService ruleService, IFineService fineService) {
         this.reservationMapper = reservationMapper;
         this.bookMapper = bookMapper;
-        this.ruleService=ruleService; this.fineService=fineService;
+        this.ruleService = ruleService;
+        this.fineService = fineService;
         this.borrowMapper = borrowMapper;
         this.systemConfigMapper = systemConfigMapper;
     }
@@ -59,7 +64,7 @@ public class ReservationServiceImpl implements IReservationService {
             throw new BusinessException(400, "已达最大预约数量（" + maxReserve + "本）");
         }
 
-        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
+        LocalDateTime now = LocalDateTime.now(IFineService.ZONE);
         Reservation reservation = new Reservation();
         reservation.setUserId(userId);
         reservation.setBookId(bookId);
@@ -99,7 +104,6 @@ public class ReservationServiceImpl implements IReservationService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void pickup(Integer userId, Integer reservationId) {
-        ruleService.lock();
         processExpiredReady();
 
         Reservation reservation = reservationMapper.findById(reservationId);
@@ -112,12 +116,14 @@ public class ReservationServiceImpl implements IReservationService {
         if (!"READY".equals(reservation.getStatus())) {
             throw new BusinessException(400, "尚未轮到您取书，请继续排队");
         }
-        if (reservation.getExpireTime() != null && LocalDateTime.now(com.example.book.service.FineService.ZONE).isAfter(reservation.getExpireTime())) {
+        if (reservation.getExpireTime() != null && LocalDateTime.now(IFineService.ZONE).isAfter(reservation.getExpireTime())) {
             expireAndPromote(reservation);
             throw new BusinessException(400, "取书期限已过，预约已失效");
         }
 
-        int maxBorrow = getIntConfig("max_borrow_count", 5);
+        // 一次读取完整规则，本次校验、到期时间和快照使用同一版本。
+        Map<String, String> rules = ruleService.current();
+        int maxBorrow = Integer.parseInt(rules.get("max_borrow_count"));
         if (borrowMapper.countActiveByUserId(userId) >= maxBorrow) {
             throw new BusinessException(400, "已达最大借阅数量（" + maxBorrow + "册），请先归还后再取书");
         }
@@ -125,8 +131,8 @@ public class ReservationServiceImpl implements IReservationService {
             throw new BusinessException(400, "您已借阅该图书");
         }
 
-        int borrowDays = getIntConfig("borrow_days", 30);
-        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
+        int borrowDays = Integer.parseInt(rules.get("borrow_days"));
+        LocalDateTime now = LocalDateTime.now(IFineService.ZONE);
         BorrowRecord record = new BorrowRecord();
         record.setUserId(userId);
         record.setBookId(reservation.getBookId());
@@ -134,7 +140,7 @@ public class ReservationServiceImpl implements IReservationService {
         record.setDueTime(now.plusDays(borrowDays));
         record.setStatus("BORROWING");
         record.setRenewCount(0);
-        ruleService.snapshot(record, ruleService.current());
+        ruleService.snapshot(record, rules);
         if (borrowMapper.insert(record) <= 0) {
             throw new BusinessException("创建借阅记录失败");
         }
@@ -165,7 +171,7 @@ public class ReservationServiceImpl implements IReservationService {
     }
 
     private void processExpiredReady() {
-        List<Reservation> expired = reservationMapper.findExpiredReady(LocalDateTime.now(com.example.book.service.FineService.ZONE));
+        List<Reservation> expired = reservationMapper.findExpiredReady(LocalDateTime.now(IFineService.ZONE));
         for (Reservation reservation : expired) {
             expireAndPromote(reservation);
         }
@@ -187,7 +193,7 @@ public class ReservationServiceImpl implements IReservationService {
             return;
         }
         int pickupDays = getIntConfig("pickup_days", 3);
-        LocalDateTime expireTime = LocalDateTime.now(com.example.book.service.FineService.ZONE).plusDays(pickupDays);
+        LocalDateTime expireTime = LocalDateTime.now(IFineService.ZONE).plusDays(pickupDays);
         if (reservationMapper.updateToReady(waiting.getId(), expireTime) <= 0) {
             bookMapper.increaseStock(bookId);
         }

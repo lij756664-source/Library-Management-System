@@ -1,0 +1,82 @@
+const fs=require('fs'),path=require('path'),cp=require('child_process'),crypto=require('crypto');
+const {credential}=require('./qa-config.cjs');
+const dir=path.resolve('docs/2026-11-03回归证据');
+function sql(s,db='book_db_regression'){const r=cp.spawnSync('C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe',['-h','localhost','-u',credential('username'),'--default-character-set=utf8mb4','-N','-B',db,'-e',s],{env:{...process.env,MYSQL_PWD:credential('password')},encoding:'utf8'});if(r.status!==0)throw Error('核对数据库失败');return r.stdout.trim();}
+const files=['接口与数据库结果.json','回滚补测/接口与数据库结果.json','统计与边界补测/接口与数据库结果.json','并发组合补测/接口与数据库结果.json'];
+const cases=new Map();for(const file of files){for(const item of JSON.parse(fs.readFileSync(path.join(dir,file),'utf8')).records)cases.set(item.id,{...item,evidence:file});}
+const ui=JSON.parse(fs.readFileSync(path.join(dir,'页面测试结果.json'),'utf8'));for(const x of ui)cases.set(x.id,{...x,evidence:'页面测试结果.json'});
+const all=[...cases.values()];const manifest={at:new Date().toISOString(),database:'book_db_regression',rules:sql("SELECT config_key,config_value FROM system_config ORDER BY config_key"),remainingTestTriggers:sql("SELECT TRIGGER_NAME FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA='book_db_regression' AND TRIGGER_NAME LIKE 'rg_%'"),sourceCounts:sql("SELECT 'book',COUNT(*) FROM book UNION ALL SELECT 'borrow_record',COUNT(*) FROM borrow_record UNION ALL SELECT 'user',COUNT(*) FROM user UNION ALL SELECT 'reservation',COUNT(*) FROM reservation",'book_db_current'),fixtures:{books:sql("SELECT id,title,stock FROM book WHERE title LIKE 'rg_%' ORDER BY id"),borrows:sql("SELECT br.id,u.username,br.book_id,br.status,br.renew_count,br.borrow_time,br.due_time,br.fine_amount FROM borrow_record br JOIN user u ON u.id=br.user_id WHERE u.username LIKE 'rg_%' ORDER BY br.id"),reservations:sql("SELECT r.id,u.username,r.book_id,r.status FROM reservation r JOIN user u ON u.id=r.user_id WHERE u.username LIKE 'rg_%' ORDER BY r.id")}};
+fs.writeFileSync(path.join(dir,'环境与夹具清单.json'),JSON.stringify(manifest,null,2));
+const gitargs=['-c','safe.directory=C:/图书管理系统/Library-Management-System'];const git=(...a)=>cp.spawnSync('git',[...gitargs,...a],{encoding:'utf8'}).stdout;
+const version={head:git('rev-parse','HEAD').trim(),trackedDiffSha256:crypto.createHash('sha256').update(git('diff')).digest('hex'),status:git('status','--short'),node:process.version,os:process.platform};
+fs.writeFileSync(path.join(dir,'版本信息.json'),JSON.stringify(version,null,2));
+fs.writeFileSync(path.join(dir,'最终用例结果.json'),JSON.stringify(all,null,2));
+const pass=all.filter(x=>x.status==='通过').length,fail=all.filter(x=>x.status==='失败').length;
+const esc=x=>String(x??'').replace(/\|/g,'／').replace(/\r?\n/g,' ');
+const detail=['# 回归测试用例明细','','每个参数、并发轮次独立计数。同ID补测采用后一次结果，首轮原始记录保留。','','| 编号 | 操作步骤 | 预期结果 | 实际结果摘要 | 状态 | 证据文件 |','|---|---|---|---|---|---|'];
+for(const x of all){const actual=x.snapshot?'见页面快照及截图':JSON.stringify(x.actual);detail.push(`| ${esc(x.id)} | ${esc(x.steps)} | ${esc(x.expected)} | ${esc(actual?.length>300?actual.slice(0,300)+'…（完整内容见JSON）':actual)} | ${x.status} | ${x.evidence} |`);}
+fs.writeFileSync(path.join(dir,'用例明细.md'),detail.join('\n'));
+const text=`# 图书管理系统本轮回归测试报告
+
+执行日期：2026-11-03（北京时间）。执行方式：助手自动化接口、真实MySQL数据库验证与浏览器页面操作。此报告记录实际执行结果，不代表真人易用性验收，也不是全部通过声明。
+
+## 结论
+
+本轮去重后登记 ${all.length} 项（含参数化子项、55轮并发、环境与恢复检查、8项页面检查），通过 ${pass} 项，失败 ${fail} 项。失败归并为5类缺陷，其中4类并发问题均在5轮中复现。当前版本不满足并发一致性验收条件，应先修复再回归。没有在测试过程中修改应用业务实现。
+
+## 环境和数据隔离
+
+- 后端：http://127.0.0.1:8080；前端：http://127.0.0.1:5173，开发服务。
+- 测试库：book_db_regression，复制自已备份的book_db_current。执行前核对local配置、MySQL活动连接；保存B规则后同时检查目标库变为20天、基线库仍30天，确认请求写入隔离库。
+- 基线提交：${version.head}；存在未提交的服务接口拆分、规则锁移除和统计整理改动。准确状态及差异摘要哈希见版本信息.json，不能把HEAD单独视作被测全部源码。
+- API测试使用独立回归账号；浏览器分别登录管理员和读者。密码和完整令牌未写入测试证据。
+- 页面检查包括默认窄视口和1440×960桌面视口；统计截图采用1440×960。窄视口截图不用于宣称移动端验收通过。
+
+## 已执行范围
+
+1. 五项整组保存、读者读取、缺项/null/非法文本/小数/上下限以及合法边界；失败保存后重新读取，确认原配置不变。
+2. A规则真实借出→改B→按旧快照续借、最后续借次数拒绝；越权续借和归还；零续借、零日费、今天/昨天/前天到期展示；历史日费逾期归还、最终金额固定、重复归还。
+3. 真实借走最后库存→预约→归还→READY→改B→取书；数量满额的普通借阅和预约取书拒绝；预约取书越权拒绝。
+4. 统计日期首尾边界、非法/缺失/倒置日期、无数据、TOP10并列ID排序、零借阅图书、真实借还贡献、全局概况与独立SQL罚金汇总；旧统计路由删除；管理员/读者/匿名/伪造令牌权限。
+5. 11类并发各5轮：规则保存与借出、保存与取书、最后名额、重复同书、最后库存、最后续借机会、重复归还、续借与归还、重复取书、借出与取书争名额、两次管理员保存。
+6. 真实数据库故障注入：借阅插入后库存更新失败、归还状态更新后库存失败、取书插入后预约更新失败、五项规则保存中途失败，均验证回滚。
+7. 浏览器规则未保存输入与生效值分离、保存刷新、中文非法提示、读者弹窗、恢复规则、统计饼图排行、无数据与倒置日期保留原范围。截图和页面文字快照一同保留。
+
+## 缺陷清单
+
+| 编号 | 优先级 | 复现和实际结果 | 对应证据 |
+|---|---|---|---|
+| D01 | 高 | 上限1、同一读者并发借两种书，两请求均成功，最终在借2本，5/5轮复现 | C-limit-1至5 |
+| D02 | 高 | 上限2且已续借1次，并发续借两次均成功，最终renew_count=3；到期时间只增加一次7天，次数与日期不一致，5/5轮复现 | C-renew-1至5 |
+| D03 | 高 | 同一READY预约并发取书，两请求均成功，生成2笔借阅，5/5轮复现 | C-pickup-1至5 |
+| D04 | 高 | 上限1，并发普通借阅与预约取书，两条路径都成功而超限，5/5轮复现 | C-borrow-pickup-1至5 |
+| D05 | 中 | 管理员GET /api/statistics/overview?start=bad&end=bad，HTTP200但业务code=500；应拒绝非法输入并返回参数错误 | S03-start=bad&end=bad |
+
+代码线索：借出/取书的数量校验与插入未形成同用户互斥；续借SQL只判断BORROWING、没有次数或版本条件；预约完成更新缺少READY条件。上述是排查方向，不代表已修复。非法日期缺少相应类型转换异常的参数错误处理，落入全局异常兜底。
+
+## 方法和证据边界
+
+并发请求使用Promise.all发送，在隔离库临时增加BEFORE INSERT/UPDATE延迟触发器，让检查与写入产生交错；每轮新建专用夹具，保存客户端起止、响应和数据库最终状态，之后移除触发器。成功复现的违规最终状态本身证明一致性问题；通过的5轮只证明这些调度结果，不能推断所有交错均安全。保存与读规则用例主要覆盖保存进行中读取完整旧版，不替代所有时间顺序组合。
+
+部分借阅/预约直接用SQL构造，用于稳定并发、日期和状态前置；真实借出、归还、预约与取书也另有独立用例。直接构造记录的库存不代表完整流转，重复归还等用例按各自夹具初值核算。轮次之间通过SQL复位本轮专用账号的状态，不作为真实归还通过证据。测试夹具保留，因此测试库当前统计会包含本轮数据，不能用于演示。
+
+首轮4项回滚因测试脚本MySQL分隔符错误未执行，原始JSON中保留错误；修正脚本后四项补测全部通过。最终汇总采用补测结果，未将工具错误算作应用缺陷。环境与恢复重复检查按同ID取最后一次，不重复累计。
+
+## 尚未覆盖和后续要求
+
+- 10000条指定规模的完整页面性能复测本轮未执行；接口响应时间仅为诊断字段，不能作为3秒页面性能通过结论，旧版性能也不沿用。
+- 三种保存超时/响应丢失后的真实页面恢复链路本轮尚未重新注入；旧报告仅作历史参考。
+- 签名正确但已过期令牌本轮未重新生成；伪造令牌检查不能替代它。
+- 跨北京时间午夜、跨年完整借出归还的可控时钟流程、全部历史数据兼容组合未完成；历史日期夹具不替代真实时钟流程。
+- 真人3人易用性待线下执行；本轮未重新执行数据库迁移、也未重新运行Maven单元测试或生产构建。此前31项测试通过不计入本次统计。
+- 发现核心并发失败后，本报告作为第一轮缺陷报告提交。修复D01—D05后必须重新执行受影响用例及必要回归，并补齐以上验收项，才能提交最终通过结论。
+
+## 恢复与提交材料
+
+最终五项规则恢复30/2/7/0.50/3；临时rg_触发器已核对清除。基线库当前仍为34种图书、114条借阅、5名用户、3条预约，与复制前数量一致；这属于数量核对，不宣称全库逐字节比较。原库没有被本轮脚本写入。
+
+建议提交本报告、用例明细.md、最终用例结果.json、页面截图、原始JSON及测试脚本。环境与夹具清单.json提供专用数据ID；版本信息.json记录版本。不要把local-backups中的完整数据库、连接配置备份或application-local.yml提交给老师；它们含本机敏感配置或账号数据。
+`;
+fs.writeFileSync(path.join(dir,'测试报告.md'),text);
+const hashes={};for(const name of fs.readdirSync(dir)){const p=path.join(dir,name);if(fs.statSync(p).isFile())hashes[name]=crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');}fs.writeFileSync(path.join(dir,'证据校验值.json'),JSON.stringify(hashes,null,2));
+console.log(JSON.stringify({cases:all.length,passed:pass,failed:fail,triggersRemaining:manifest.remainingTestTriggers,report:path.join(dir,'测试报告.md')}));

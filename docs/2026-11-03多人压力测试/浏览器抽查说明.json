@@ -1,0 +1,13 @@
+{
+  "completedAt": "2026-11-03T02:56:02.944Z",
+  "observedLoadPhase": {
+    "phase": "acceptance-10",
+    "users": 10,
+    "start": "2026-11-03T02:52:48.004Z",
+    "scheduledEnd": "2026-11-03T02:57:48.004Z",
+    "at": "2026-11-03T02:52:48.004Z",
+    "completed": 33
+  },
+  "errors": [],
+  "notes": "10人阶段真实浏览器额外抽查，首次进入+9次查询，5种范围各2次"
+}

@@ -9,14 +9,12 @@ import com.example.book.mapper.BorrowMapper;
 import com.example.book.mapper.SystemConfigMapper;
 import com.example.book.service.IBorrowService;
 import com.example.book.service.IReservationService;
-import com.example.book.vo.BookStatVO;
-import com.example.book.vo.CategoryStatVO;
-import com.example.book.vo.DashboardVO;
+import com.example.book.service.IRuleService;
+import com.example.book.service.IFineService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -26,8 +24,8 @@ import java.util.Map;
 @Service
 public class BorrowServiceImpl implements IBorrowService {
 
-    private final com.example.book.service.RuleService ruleService;
-    private final com.example.book.service.FineService fineService;
+    private final IRuleService ruleService;
+    private final IFineService fineService;
     private final BorrowMapper borrowMapper;
     private final BookMapper bookMapper;
     private final SystemConfigMapper systemConfigMapper;
@@ -35,8 +33,10 @@ public class BorrowServiceImpl implements IBorrowService {
 
     public BorrowServiceImpl(BorrowMapper borrowMapper, BookMapper bookMapper,
                              SystemConfigMapper systemConfigMapper,
-                             IReservationService reservationService, com.example.book.service.RuleService ruleService, com.example.book.service.FineService fineService) {
-        this.ruleService=ruleService; this.fineService=fineService;
+                             IReservationService reservationService,
+                             IRuleService ruleService, IFineService fineService) {
+        this.ruleService = ruleService;
+        this.fineService = fineService;
         this.borrowMapper = borrowMapper;
         this.bookMapper = bookMapper;
         this.systemConfigMapper = systemConfigMapper;
@@ -46,7 +46,6 @@ public class BorrowServiceImpl implements IBorrowService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void borrowBook(Integer userId, Integer bookId) {
-        ruleService.lock();
         Book book = bookMapper.findById(bookId);
         if (book == null) {
             throw new BusinessException(404, "图书不存在");
@@ -55,7 +54,9 @@ public class BorrowServiceImpl implements IBorrowService {
             throw new BusinessException(400, "该书暂无库存，无法借阅");
         }
 
-        int maxBorrow = getIntConfig("max_borrow_count", 5);
+        // 一次读取完整规则，本次校验、到期时间和快照使用同一版本。
+        Map<String, String> rules = ruleService.current();
+        int maxBorrow = Integer.parseInt(rules.get("max_borrow_count"));
         if (borrowMapper.countActiveByUserId(userId) >= maxBorrow) {
             throw new BusinessException(400, "已达最大借阅数量（" + maxBorrow + "册）");
         }
@@ -64,8 +65,8 @@ public class BorrowServiceImpl implements IBorrowService {
             throw new BusinessException(400, "您已借阅该图书，不能重复借阅");
         }
 
-        int borrowDays = getIntConfig("borrow_days", 30);
-        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
+        int borrowDays = Integer.parseInt(rules.get("borrow_days"));
+        LocalDateTime now = LocalDateTime.now(IFineService.ZONE);
 
         BorrowRecord record = new BorrowRecord();
         record.setUserId(userId);
@@ -74,7 +75,7 @@ public class BorrowServiceImpl implements IBorrowService {
         record.setDueTime(now.plusDays(borrowDays));
         record.setStatus("BORROWING");
         record.setRenewCount(0);
-        ruleService.snapshot(record, ruleService.current());
+        ruleService.snapshot(record, rules);
 
         if (borrowMapper.insert(record) <= 0) {
             throw new BusinessException("创建借阅记录失败");
@@ -87,7 +88,6 @@ public class BorrowServiceImpl implements IBorrowService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void renewBook(Integer userId, Integer borrowId) {
-        ruleService.lock();
         BorrowRecord record = borrowMapper.findById(borrowId);
         if (record == null) {
             throw new BusinessException(404, "借阅记录不存在");
@@ -102,6 +102,7 @@ public class BorrowServiceImpl implements IBorrowService {
             throw new BusinessException(400, "图书已逾期，请先归还后再借阅");
         }
 
+        // 续借沿用借阅时的规则，不读取当前配置。
         int maxRenew = record.getMaxRenewCountSnapshot();
         if (record.getRenewCount() >= maxRenew) {
             throw new BusinessException(400, "已达最大续借次数（" + maxRenew + "次）");
@@ -117,7 +118,6 @@ public class BorrowServiceImpl implements IBorrowService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void returnBook(Integer userId, Integer borrowId, boolean isAdmin) {
-        ruleService.lock();
         BorrowRecord record = borrowMapper.findById(borrowId);
         if (record == null) {
             throw new BusinessException(404, "借阅记录不存在");
@@ -129,10 +129,12 @@ public class BorrowServiceImpl implements IBorrowService {
             throw new BusinessException(400, "该图书已归还");
         }
 
-        LocalDateTime now = LocalDateTime.now(com.example.book.service.FineService.ZONE);
-        var calculation=fineService.calculate(record.getDueTime().toLocalDate(),record.getFinePerDaySnapshot(),now.toLocalDate());
-        int overdueDays=calculation.overdueDays();
-        BigDecimal fineAmount=calculation.amount();
+        LocalDateTime now = LocalDateTime.now(IFineService.ZONE);
+        // 归还按原日费结算，管理员修改当前规则不影响本记录。
+        var calculation = fineService.calculate(record.getDueTime().toLocalDate(),
+                record.getFinePerDaySnapshot(), now.toLocalDate());
+        int overdueDays = calculation.overdueDays();
+        BigDecimal fineAmount = calculation.amount();
 
         BorrowRecord update = new BorrowRecord();
         update.setId(borrowId);
@@ -165,11 +167,13 @@ public class BorrowServiceImpl implements IBorrowService {
         if (!"BORROWING".equals(record.getStatus()) || record.getDueTime() == null) {
             return;
         }
-        var today=java.time.LocalDate.now(com.example.book.service.FineService.ZONE);
-        var result=fineService.calculate(record.getDueTime().toLocalDate(),record.getFinePerDaySnapshot(),today);
-        record.setOverdueDays(result.overdueDays()); record.setFineAmount(result.amount());
-        record.setOverdue(result.overdueDays()>0);
-        record.setRemainDays(ChronoUnit.DAYS.between(today,record.getDueTime().toLocalDate()));
+        var today = java.time.LocalDate.now(IFineService.ZONE);
+        var result = fineService.calculate(record.getDueTime().toLocalDate(),
+                record.getFinePerDaySnapshot(), today);
+        record.setOverdueDays(result.overdueDays());
+        record.setFineAmount(result.amount());
+        record.setOverdue(result.overdueDays() > 0);
+        record.setRemainDays(ChronoUnit.DAYS.between(today, record.getDueTime().toLocalDate()));
     }
 
     @Override
@@ -181,55 +185,4 @@ public class BorrowServiceImpl implements IBorrowService {
         return rules;
     }
 
-    @Override
-    public DashboardVO dashboard() {
-        DashboardVO vo = borrowMapper.getDashboardStats();
-        vo.setTotalFine(calcTotalFineAmount());
-        return vo;
-    }
-
-    /** 累计罚款 = 已归还实际罚款 + 当前逾期未还预估罚款 */
-    private BigDecimal calcTotalFineAmount() {
-        List<BorrowRecord> all = borrowMapper.findAllWithDetail(null, null);
-        BigDecimal sum = BigDecimal.ZERO;
-        for (BorrowRecord record : all) {
-            if ("RETURNED".equals(record.getStatus())) {
-                if (record.getFineAmount() != null) {
-                    sum = sum.add(record.getFineAmount());
-                }
-            } else if ("BORROWING".equals(record.getStatus())) {
-                fillEstimatedFine(record);
-                if (record.getFineAmount() != null) {
-                    sum = sum.add(record.getFineAmount());
-                }
-            }
-        }
-        return sum;
-    }
-
-    @Override
-    public List<CategoryStatVO> statByCategory() {
-        return borrowMapper.statByCategory();
-    }
-
-    @Override
-    public List<BookStatVO> statTopBooks(int limit) {
-        return borrowMapper.statTopBooks(Math.max(1,Math.min(10,limit)));
-    }
-
-    private int getIntConfig(String key, int defaultValue) {
-        SystemConfig config = systemConfigMapper.findByKey(key);
-        if (config == null) {
-            return defaultValue;
-        }
-        return Integer.parseInt(config.getConfigValue());
-    }
-
-    private BigDecimal getDecimalConfig(String key, BigDecimal defaultValue) {
-        SystemConfig config = systemConfigMapper.findByKey(key);
-        if (config == null) {
-            return defaultValue;
-        }
-        return new BigDecimal(config.getConfigValue());
-    }
 }

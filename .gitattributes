@@ -1,0 +1,4 @@
+# Preserve original test evidence bytes so recorded SHA256 checks survive checkout.
+docs/2026-11-03回归证据/** -text -whitespace
+docs/2026-11-03性能测试/** -text -whitespace
+docs/2026-11-03多人压力测试/** -text -whitespace

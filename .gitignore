@@ -45,3 +45,10 @@ springboot_back/src/main/resources/application-local.yaml
 .env
 .env.local
 .pnpm-store/
+
+# Local database backups and private connection configuration copies
+local-backups/
+
+# Local QA launchers, logs, process IDs and generated personal documents
+/tmp/
+/output/

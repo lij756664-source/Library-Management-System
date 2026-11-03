@@ -1,0 +1,156 @@
+{
+  "startedAt": "2026-11-03T02:12:03.227Z",
+  "version": "3d66e3bba8bcbdb40728f4fd1aa1310ef654b3ed",
+  "base": "http://127.0.0.1:8080/api",
+  "database": "book_db_regression",
+  "prefix": "rg_mw01y9ln",
+  "records": [
+    {
+      "id": "ENV",
+      "steps": "核对local配置与MySQL活动连接",
+      "expected": "独立测试库且原规则30/2/7/0.50/3",
+      "actual": {
+        "database": "book_db_regression",
+        "connections": 11,
+        "rules": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        }
+      },
+      "status": "通过"
+    },
+    {
+      "id": "F02",
+      "steps": "管理员保存B，重新GET并由读者读取",
+      "expected": "五项整组更新；基线库仍30天",
+      "actual": {
+        "response": {
+          "borrow_days": "20",
+          "renew_days": "5",
+          "max_renew_count": "1",
+          "fine_per_day": "1.00",
+          "max_borrow_count": "3"
+        },
+        "targetRules": "20",
+        "sourceRules": "30"
+      },
+      "status": "通过"
+    },
+    {
+      "id": "R-borrow",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "response": {
+          "url": "/borrows",
+          "method": "POST",
+          "start": "2026-11-03T02:12:05.388Z",
+          "end": "2026-11-03T02:12:05.421Z",
+          "ms": 33,
+          "http": 200,
+          "code": 500,
+          "message": "服务器内部错误，请稍后重试",
+          "data": null
+        },
+        "before": 0,
+        "after": 0,
+        "stock": 5
+      },
+      "status": "通过"
+    },
+    {
+      "id": "R-return",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "response": {
+          "url": "/borrows/177/return",
+          "method": "PUT",
+          "start": "2026-11-03T02:12:06.426Z",
+          "end": "2026-11-03T02:12:06.452Z",
+          "ms": 26,
+          "http": 200,
+          "code": 500,
+          "message": "服务器内部错误，请稍后重试",
+          "data": null
+        },
+        "before": "BORROWING\t0\t2026-12-03 10:12:06\t0.00\t0",
+        "after": "BORROWING\t0\t2026-12-03 10:12:06\t0.00\t0",
+        "stock": 5
+      },
+      "status": "通过"
+    },
+    {
+      "id": "R-pickup",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "response": {
+          "url": "/reservations/11/pickup",
+          "method": "PUT",
+          "start": "2026-11-03T02:12:07.394Z",
+          "end": "2026-11-03T02:12:07.419Z",
+          "ms": 25,
+          "http": 200,
+          "code": 500,
+          "message": "服务器内部错误，请稍后重试",
+          "data": null
+        },
+        "before": 0,
+        "after": 0,
+        "stock": 5
+      },
+      "status": "通过"
+    },
+    {
+      "id": "R-rules",
+      "steps": "在测试库必要写入位置注入SIGNAL故障",
+      "expected": "HTTP业务失败且所有相关变更回滚",
+      "actual": {
+        "response": {
+          "url": "/rules",
+          "method": "PUT",
+          "start": "2026-11-03T02:12:08.204Z",
+          "end": "2026-11-03T02:12:08.228Z",
+          "ms": 23,
+          "http": 200,
+          "code": 500,
+          "message": "服务器内部错误，请稍后重试",
+          "data": null
+        },
+        "before": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        },
+        "after": {
+          "borrow_days": "30",
+          "renew_days": "7",
+          "max_renew_count": "2",
+          "fine_per_day": "0.50",
+          "max_borrow_count": "3"
+        },
+        "stock": 5
+      },
+      "status": "通过"
+    },
+    {
+      "id": "RESTORE",
+      "steps": "恢复测试前五项规则",
+      "expected": "30/2/7/0.50/3",
+      "actual": {
+        "borrow_days": "30",
+        "renew_days": "7",
+        "max_renew_count": "2",
+        "fine_per_day": "0.50",
+        "max_borrow_count": "3"
+      },
+      "status": "通过"
+    }
+  ]
+}

@@ -28,7 +28,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Search, Refresh, InfoFilled } from '@element-plus/icons-vue'
-import request from '../api/request'
+import { getOverview } from '../api/statistics'
 import CategoryPie from '../components/CategoryPie.vue'
 const start = ref(''), end = ref(''), appliedRange = ref('全部历史')
 const loading = ref(false), dashboard = ref({}), categoryStats = ref([]), topBooks = ref([])
@@ -45,7 +45,7 @@ async function loadData() {
   const from = start.value, to = end.value
   loading.value = true
   try {
-    const res = await request.get('/statistics/overview', { params: { start: from || undefined, end: to || undefined } })
+    const res = await getOverview({ start: from || undefined, end: to || undefined })
     dashboard.value = res.data.dashboard; categoryStats.value = res.data.categoryStats; topBooks.value = res.data.topBooks
     appliedRange.value = from ? from + ' 至 ' + to : '全部历史'
   } finally { loading.value = false }

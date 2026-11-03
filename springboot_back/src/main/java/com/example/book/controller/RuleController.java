@@ -2,7 +2,7 @@ package com.example.book.controller;
 
 import com.example.book.annotation.RequireRole;
 import com.example.book.common.Result;
-import com.example.book.service.RuleService;
+import com.example.book.service.IRuleService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +14,9 @@ import java.util.Map;
 @RequestMapping("/api/rules")
 @RequireRole("ADMIN")
 public class RuleController {
-    private final RuleService service;
+    private final IRuleService service;
 
-    public RuleController(RuleService service) {
+    public RuleController(IRuleService service) {
         this.service = service;
     }
 

@@ -1,5 +1,6 @@
-package com.example.book.service;
+package com.example.book.service.impl;
 
+import com.example.book.service.IRuleService;
 import com.example.book.common.BusinessException;
 import com.example.book.entity.BorrowRecord;
 import com.example.book.entity.SystemConfig;
@@ -13,18 +14,20 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class RuleService {
-    public static final List<String> KEYS = List.of(
+public class RuleServiceImpl implements IRuleService {
+    private static final List<String> KEYS = List.of(
             "borrow_days", "max_renew_count", "renew_days", "fine_per_day", "max_borrow_count");
     private static final List<String> NAMES = List.of(
             "借阅期限", "续借次数上限", "每次续借天数", "每日罚金", "同时借阅上限");
     private final SystemConfigMapper mapper;
 
-    public RuleService(SystemConfigMapper mapper) {
+    public RuleServiceImpl(SystemConfigMapper mapper) {
         this.mapper = mapper;
     }
 
+    @Override
     public Map<String, String> current() {
+        // 单条查询取得完整规则；调用方可复用结果，避免分次查询混用版本。
         Map<String, String> result = new LinkedHashMap<>();
         for (SystemConfig config : mapper.findAll()) {
             if (KEYS.contains(config.getConfigKey())) {
@@ -37,13 +40,14 @@ public class RuleService {
         return result;
     }
 
-    // 与借出、续借、归还按相同顺序加锁，锁持有至外层事务结束。
-    public void lock() {
+    // 仅保存规则时锁定整组配置，协调并发保存，锁持有至事务结束。
+    private void lock() {
         if (mapper.lockRules().size() != KEYS.size()) {
             throw new BusinessException("借阅规则暂不可用，请联系管理员");
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> save(Map<String, String> input) {
         Map<String, String> values = new LinkedHashMap<>();
@@ -68,6 +72,7 @@ public class RuleService {
             }
             values.put(key, money ? number.setScale(2).toPlainString() : number.toPlainString());
         }
+        // 所有输入校验通过后再加锁，五项更新在同一事务中提交。
         lock();
         values.forEach((key, value) -> {
             if (mapper.updateValue(key, value) != 1) {
@@ -77,6 +82,8 @@ public class RuleService {
         return current();
     }
 
+    // 保留借阅当时的规则，后续续借和罚金不随新规则变化。
+    @Override
     public void snapshot(BorrowRecord record, Map<String, String> rules) {
         record.setBorrowDaysSnapshot(Integer.valueOf(rules.get("borrow_days")));
         record.setMaxRenewCountSnapshot(Integer.valueOf(rules.get("max_renew_count")));
