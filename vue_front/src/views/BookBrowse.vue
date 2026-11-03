@@ -69,7 +69,10 @@
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item label="馆藏位置">{{ detail.location || '暂未标注，可咨询馆员' }}</el-descriptions-item>
-            <el-descriptions-item label="预约排队">{{ detail.waitingCount || 0 }} 人</el-descriptions-item>
+            <el-descriptions-item label="预约排队">
+              <span v-if="detail.waitingCount > 0">{{ detail.waitingCount }} 人</span>
+              <span v-else class="text-muted">暂无排队</span>
+            </el-descriptions-item>
             <el-descriptions-item label="简介">{{ detail.description || '-' }}</el-descriptions-item>
           </el-descriptions>
         </template>
@@ -156,8 +159,14 @@ const openDetail = async (row) => {
   detail.value = null
   try {
     const res = await getBook(row.id)
-    detail.value = res.data || null
-    if (!detail.value) ElMessage.warning('图书信息不存在或已下架')
+    const data = res.data || null
+    // 兜底：详情接口若未返回排队人数（如后端为旧版本），沿用列表中同一本书的实时值，
+    // 保证「列表」与「详情」两个入口显示的预约排队人数一致
+    if (data && (data.waitingCount === null || data.waitingCount === undefined)) {
+      data.waitingCount = row.waitingCount ?? 0
+    }
+    detail.value = data
+    if (!data) ElMessage.warning('图书信息不存在或已下架')
   } catch {
     detail.value = null
   } finally {
