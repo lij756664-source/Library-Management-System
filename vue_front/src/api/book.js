@@ -19,3 +19,8 @@ export function updateBook(id, data) {
 export function deleteBook(id) {
   return request.delete(`/books/${id}`)
 }
+
+/** 管理员增减馆藏库存：PUT /api/books/{id}/stock  body: { delta } */
+export function adjustBookStock(id, delta) {
+  return request.put(`/books/${id}/stock`, { delta })
+}
