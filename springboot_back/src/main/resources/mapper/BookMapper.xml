@@ -66,11 +66,13 @@
         DELETE FROM book WHERE id = #{id}
     </delete>
 
+    <!-- 借阅成功后扣库存；stock > 0 避免减成负数 -->
     <update id="decreaseStock">
         UPDATE book SET stock = stock - 1, update_time = NOW()
         WHERE id = #{id} AND stock > 0
     </update>
 
+    <!-- 无人排队时归还/过期后回补可借库存 -->
     <update id="increaseStock">
         UPDATE book SET stock = stock + 1, update_time = NOW()
         WHERE id = #{id}

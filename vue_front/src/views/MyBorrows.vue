@@ -47,6 +47,7 @@
       <el-table-column label="实际归还时间" width="170"><template #default="{ row }">{{ row.returnTime ? formatDateTime(row.returnTime) : '尚未归还' }}</template></el-table-column>
       <el-table-column label="操作" width="160" align="center" fixed="right">
         <template #default="{ row }">
+          <!-- 仅借阅中可操作：逾期禁止续借，归还始终允许 -->
           <template v-if="row.status === 'BORROWING'">
             <el-button type="warning" link :disabled="row.overdue" @click="handleRenew(row)">续借</el-button>
             <el-button type="success" link @click="handleReturn(row)">归还</el-button>
@@ -74,6 +75,7 @@ const finePerDay = ref(0.5)
 
 const formatFine = (row) => calcDisplayFine(row, finePerDay.value).toFixed(2)
 
+/** 借阅记录查询：GET /api/borrows/my，可按借阅中/已归还筛选 */
 const loadData = async () => {
   loading.value = true
   try {
@@ -84,6 +86,7 @@ const loadData = async () => {
   }
 }
 
+/** 续借：PUT /api/borrows/{id}/renew，逾期按钮已禁用 */
 const handleRenew = (row) => {
   ElMessageBox.confirm(`确定续借《${row.bookTitle}》吗？`, '续借确认', { type: 'info' })
     .then(async () => {
@@ -94,6 +97,7 @@ const handleRenew = (row) => {
     .catch(() => {})
 }
 
+/** 归还：PUT /api/borrows/{id}/return；逾期时提示将核算罚金 */
 const handleReturn = (row) => {
   const tip = row.overdue ? `该书已逾期 ${row.overdueDays} 天，暂计罚金 ${formatFine(row)} 元，归还时将核算最终金额。确定归还吗？` : `确定归还《${row.bookTitle}》吗？`
   ElMessageBox.confirm(tip, '归还确认', { type: row.overdue ? 'warning' : 'info' })

@@ -44,6 +44,7 @@
       <el-table-column label="操作" width="190" align="center" fixed="right">
         <template #default="{ row }">
           <el-button type="info" link :icon="View" @click="openDetail(row)">详情</el-button>
+          <!-- 有库存走借阅；无库存则预约（待取书/已预约只展示状态） -->
           <el-button v-if="row.stock > 0" type="primary" link @click="handleBorrow(row)">借阅</el-button>
           <el-button v-else-if="row.myReserveStatus === 'READY'" type="warning" link disabled>待取书</el-button>
           <el-button v-else-if="row.myReserveStatus === 'WAITING'" type="info" link disabled>已预约</el-button>
@@ -164,6 +165,7 @@ const openDetail = async (row) => {
   }
 }
 
+/** 图书借阅：确认后 POST /api/borrows，成功再刷新库存 */
 const handleBorrow = (row) => {
   ElMessageBox.confirm(`确定借阅《${row.title}》吗？`, '借阅确认', { type: 'info' })
     .then(async () => {
@@ -174,6 +176,7 @@ const handleBorrow = (row) => {
     .catch(() => {})
 }
 
+/** 无库存预约：确认后 POST /api/reservations，加入 WAITING 队列 */
 const handleReserve = (row) => {
   ElMessageBox.confirm(`《${row.title}》暂无库存，确定加入预约队列吗？`, '预约确认', { type: 'info' })
     .then(async () => {

@@ -53,6 +53,7 @@
       <el-table-column label="实际归还时间" width="170"><template #default="{ row }">{{ row.returnTime ? formatDateTime(row.returnTime) : '尚未归还' }}</template></el-table-column>
       <el-table-column label="操作" width="100" align="center" fixed="right">
         <template #default="{ row }">
+          <!-- 管理员代还，接口与读者归还相同，后端按 ADMIN 角色放行 -->
           <el-button v-if="row.status === 'BORROWING'" type="success" link @click="handleReturn(row)">代还</el-button>
         </template>
       </el-table-column>
@@ -74,6 +75,7 @@ const records = ref([])
 const searchForm = reactive({ keyword: '', status: '' })
 const finePerDay = ref(0.5)
 
+/** 管理员借阅记录查询：GET /api/borrows */
 const loadData = async () => {
   loading.value = true
   try {
@@ -87,6 +89,7 @@ const loadData = async () => {
 
 const resetSearch = () => { searchForm.keyword = ''; searchForm.status = ''; loadData() }
 
+/** 代还：仍调用 returnBook，后端用角色判断是否允许还别人的书 */
 const handleReturn = (row) => {
   ElMessageBox.confirm(`确定为 ${row.nickname} 代还《${row.bookTitle}》吗？`, '代还确认', { type: 'warning' })
     .then(async () => { await returnBook(row.id); ElMessage.success('归还成功'); loadData() })

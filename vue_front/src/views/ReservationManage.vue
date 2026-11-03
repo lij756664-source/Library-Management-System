@@ -68,6 +68,7 @@ const loading = ref(false)
 const records = ref([])
 const searchForm = reactive({ keyword: '', status: '' })
 
+/** 管理员预约列表：GET /api/reservations */
 const loadData = async () => {
   loading.value = true
   try {
@@ -87,6 +88,7 @@ const resetSearch = () => {
   loadData()
 }
 
+/** 管理员取消预约，队列顺延 */
 const handleCancel = (row) => {
   ElMessageBox.confirm(`确定取消 ${row.nickname} 对《${row.bookTitle}》的预约吗？队列将自动顺延。`, '取消预约', { type: 'warning' })
     .then(async () => {

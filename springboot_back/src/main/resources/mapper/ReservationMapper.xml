@@ -3,6 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.book.mapper.ReservationMapper">
 
+    <!-- 预约详情 + 排队位置 queueNo/queueSize（按预约时间先后） -->
     <sql id="reservationDetailSelect">
         SELECT r.id, r.user_id AS userId, r.book_id AS bookId, r.status,
                r.create_time AS createTime, r.expire_time AS expireTime, r.update_time AS updateTime,
@@ -22,6 +23,7 @@
         LEFT JOIN category c ON b.category_id = c.id
     </sql>
 
+    <!-- 新增预约，初始状态一般为 WAITING -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO reservation (user_id, book_id, status, create_time, update_time)
         VALUES (#{userId}, #{bookId}, #{status}, #{createTime}, #{updateTime})
@@ -32,6 +34,7 @@
         WHERE r.id = #{id}
     </select>
 
+    <!-- 是否已预约同一本书（排队中或待取书） -->
     <select id="findActiveByUserAndBook" resultType="com.example.book.entity.Reservation">
         <include refid="reservationDetailSelect"/>
         WHERE r.user_id = #{userId} AND r.book_id = #{bookId}
@@ -39,6 +42,7 @@
         LIMIT 1
     </select>
 
+    <!-- 当前有效预约本数，用于上限校验 -->
     <select id="countActiveByUserId" resultType="int">
         SELECT COUNT(*) FROM reservation
         WHERE user_id = #{userId} AND status IN ('WAITING', 'READY')
@@ -49,6 +53,7 @@
         WHERE book_id = #{bookId} AND status IN ('WAITING', 'READY')
     </select>
 
+    <!-- 队首：该书最早的 WAITING，用于顺延 -->
     <select id="findFirstWaitingByBook" resultType="com.example.book.entity.Reservation">
         <include refid="reservationDetailSelect"/>
         WHERE r.book_id = #{bookId} AND r.status = 'WAITING'
@@ -56,11 +61,13 @@
         LIMIT 1
     </select>
 
+    <!-- 待取书已过截止时间，需要作废并顺延 -->
     <select id="findExpiredReady" resultType="com.example.book.entity.Reservation">
         <include refid="reservationDetailSelect"/>
         WHERE r.status = 'READY' AND r.expire_time IS NOT NULL AND r.expire_time &lt; #{now}
     </select>
 
+    <!-- WAITING → READY，并写入取书截止时间 -->
     <update id="updateToReady">
         UPDATE reservation
         SET status = 'READY', expire_time = #{expireTime}, update_time = NOW()

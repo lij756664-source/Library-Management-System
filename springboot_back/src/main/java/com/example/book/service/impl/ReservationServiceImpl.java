@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+/** 预约排队：无库存预约、取消顺延、待取书取书、归还后分配副本 */
 @Service
 public class ReservationServiceImpl implements IReservationService {
 
@@ -40,10 +41,14 @@ public class ReservationServiceImpl implements IReservationService {
         this.systemConfigMapper = systemConfigMapper;
     }
 
+    /**
+     * 无库存预约：必须没库存、未在借这本书、未重复预约，且未超预约上限。
+     * 成功后状态为 WAITING，按预约时间排队。
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void reserveBook(Integer userId, Integer bookId) {
-        processExpiredReady();
+        processExpiredReady(); // 先清理过期未取，避免队列脏数据
 
         Book book = bookMapper.findById(bookId);
         if (book == null) {
@@ -76,6 +81,10 @@ public class ReservationServiceImpl implements IReservationService {
         }
     }
 
+    /**
+     * 取消预约：读者只能取消自己的 WAITING/READY。
+     * 若取消的是待取书（READY），该书要交给下一位或回补库存。
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void cancel(Integer userId, Integer reservationId, boolean isAdmin) {
@@ -101,6 +110,10 @@ public class ReservationServiceImpl implements IReservationService {
         }
     }
 
+    /**
+     * 待取书领取：必须是本人且状态 READY、未过取书期限。
+     * 成功后插入借阅记录，预约改为 FULFILLED（书在进入 READY 时已预留，此处不再减库存）。
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void pickup(Integer userId, Integer reservationId) {
@@ -149,6 +162,7 @@ public class ReservationServiceImpl implements IReservationService {
         }
     }
 
+    /** 有人还书后调用：有排队则队首变 READY，否则库存 +1 */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void assignReturnedCopy(Integer bookId) {
@@ -170,6 +184,7 @@ public class ReservationServiceImpl implements IReservationService {
         return reservationMapper.findAllWithDetail(keyword, status);
     }
 
+    /** 把超过取书期限仍未取的 READY 作废，并顺延下一位 */
     private void processExpiredReady() {
         List<Reservation> expired = reservationMapper.findExpiredReady(LocalDateTime.now(IFineService.ZONE));
         for (Reservation reservation : expired) {
@@ -177,6 +192,7 @@ public class ReservationServiceImpl implements IReservationService {
         }
     }
 
+    /** 单条待取书过期：EXPIRED，再把书分给下一位 */
     private void expireAndPromote(Reservation reservation) {
         if (!"READY".equals(reservation.getStatus())) {
             return;
@@ -185,14 +201,17 @@ public class ReservationServiceImpl implements IReservationService {
         promoteOrRestock(reservation.getBookId());
     }
 
-    /** 队首进入待取书；无人排队则回补可借库存 */
+    /**
+     * 队列核心：找该书最早的 WAITING。
+     * 有人 → 改为 READY 并设置取书截止时间；没人 → 库存加回可借。
+     */
     private void promoteOrRestock(Integer bookId) {
         Reservation waiting = reservationMapper.findFirstWaitingByBook(bookId);
         if (waiting == null) {
             bookMapper.increaseStock(bookId);
             return;
         }
-        int pickupDays = getIntConfig("pickup_days", 3);
+        int pickupDays = getIntConfig("pickup_days", 3); // 默认 3 天内取书
         LocalDateTime expireTime = LocalDateTime.now(IFineService.ZONE).plusDays(pickupDays);
         if (reservationMapper.updateToReady(waiting.getId(), expireTime) <= 0) {
             bookMapper.increaseStock(bookId);

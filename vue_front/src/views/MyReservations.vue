@@ -47,6 +47,7 @@
       </el-table-column>
       <el-table-column label="操作" width="160" align="center" fixed="right">
         <template #default="{ row }">
+          <!-- READY 可取书；WAITING/READY 可取消，取消后队列顺延 -->
           <el-button v-if="row.status === 'READY'" type="primary" link @click="handlePickup(row)">取书</el-button>
           <el-button
             v-if="row.status === 'WAITING' || row.status === 'READY'"
@@ -73,6 +74,7 @@ const loading = ref(false)
 const records = ref([])
 const status = ref('')
 
+/** 我的预约：GET /api/reservations/my */
 const loadData = async () => {
   loading.value = true
   try {
@@ -83,6 +85,7 @@ const loadData = async () => {
   }
 }
 
+/** 取书：待取书转为正式借阅 PUT /api/reservations/{id}/pickup */
 const handlePickup = (row) => {
   ElMessageBox.confirm(`确定领取《${row.bookTitle}》并转为借阅吗？`, '取书确认', { type: 'info' })
     .then(async () => {
@@ -93,6 +96,7 @@ const handlePickup = (row) => {
     .catch(() => {})
 }
 
+/** 取消预约：DELETE /api/reservations/{id}，队列自动顺延 */
 const handleCancel = (row) => {
   ElMessageBox.confirm(`确定取消《${row.bookTitle}》的预约吗？取消后队列将自动顺延。`, '取消预约', { type: 'warning' })
     .then(async () => {
