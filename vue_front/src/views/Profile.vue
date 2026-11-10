@@ -73,7 +73,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { UserFilled, Upload } from '@element-plus/icons-vue'
 import { getProfile, updateProfile, changePassword, uploadAvatar } from '../api/user'
 import { useAuthStore } from '../store/auth'
@@ -174,15 +174,23 @@ const handleSaveProfile = async () => {
 const handleChangePassword = async () => {
   const valid = await passwordFormRef.value.validate().catch(() => false)
   if (!valid) return
-  savingPassword.value = true
-  try {
-    await changePassword({ oldPassword: passwordForm.oldPassword, newPassword: passwordForm.newPassword })
-    ElMessage.success('密码修改成功，下次登录请使用新密码')
-    Object.assign(passwordForm, { oldPassword: '', newPassword: '', confirmPassword: '' })
-    passwordFormRef.value.resetFields()
-  } finally {
-    savingPassword.value = false
-  }
+  ElMessageBox.confirm(
+    '确定要修改登录密码吗？修改成功后，下次登录请使用新密码。',
+    '修改密码确认',
+    { type: 'warning', confirmButtonText: '确认修改', cancelButtonText: '取消' }
+  )
+    .then(async () => {
+      savingPassword.value = true
+      try {
+        await changePassword({ oldPassword: passwordForm.oldPassword, newPassword: passwordForm.newPassword })
+        ElMessage.success('密码修改成功，下次登录请使用新密码')
+        Object.assign(passwordForm, { oldPassword: '', newPassword: '', confirmPassword: '' })
+        passwordFormRef.value.resetFields()
+      } finally {
+        savingPassword.value = false
+      }
+    })
+    .catch(() => {})
 }
 
 onMounted(loadProfile)

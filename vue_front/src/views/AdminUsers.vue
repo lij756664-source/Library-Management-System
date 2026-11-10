@@ -157,7 +157,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search, Refresh, UserFilled } from '@element-plus/icons-vue'
 import { getUsers, updateUserStatus, updateUserInfo, resetUserPassword } from '../api/user'
 import { formatDateTime } from '../utils/date'
@@ -271,12 +271,20 @@ const openPasswordDialog = (row) => {
 const handlePasswordSubmit = async () => {
   const valid = await passwordFormRef.value.validate().catch(() => false)
   if (!valid) return
-  submitting.value = true
-  try {
-    await resetUserPassword(passwordTarget.value.id, passwordForm.password)
-    ElMessage.success('密码重置成功')
-    passwordVisible.value = false
-  } finally { submitting.value = false }
+  ElMessageBox.confirm(
+    `确定将读者「${passwordTarget.value.username}」的密码重置为刚输入的新密码吗？重置后原密码立即失效，该用户需使用新密码登录。`,
+    '重置密码确认',
+    { type: 'warning', confirmButtonText: '确认重置', cancelButtonText: '取消' }
+  )
+    .then(async () => {
+      submitting.value = true
+      try {
+        await resetUserPassword(passwordTarget.value.id, passwordForm.password)
+        ElMessage.success('密码重置成功')
+        passwordVisible.value = false
+      } finally { submitting.value = false }
+    })
+    .catch(() => {})
 }
 
 const openStatusDialog = (row) => {
