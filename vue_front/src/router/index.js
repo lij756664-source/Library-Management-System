@@ -14,6 +14,7 @@ import MyReservations from '../views/MyReservations.vue'
 import ReservationManage from '../views/ReservationManage.vue'
 import Statistics from '../views/Statistics.vue'
 import AdminUsers from '../views/AdminUsers.vue'
+import AdminLogs from '../views/AdminLogs.vue'
 
 import Rules from '../views/Rules.vue'
 
@@ -33,6 +34,7 @@ const routes = [
       { path: 'books', name: 'BookList', component: BookList, meta: { title: '图书管理', roles: ['ADMIN'] } },
       { path: 'categories', name: 'CategoryList', component: CategoryList, meta: { title: '分类管理', roles: ['ADMIN'] } },
       { path: 'admin-users', name: 'AdminUsers', component: AdminUsers, meta: { title: '用户管理', roles: ['ADMIN'] } },
+      { path: 'admin-logs', name: 'AdminLogs', component: AdminLogs, meta: { title: '操作日志', roles: ['ADMIN'] } },
       { path: 'borrow-manage', name: 'BorrowManage', component: BorrowManage, meta: { title: '借阅管理', roles: ['ADMIN'] } },
       { path: 'reservation-manage', name: 'ReservationManage', component: ReservationManage, meta: { title: '预约管理', roles: ['ADMIN'] } },
       { path: 'statistics', name: 'Statistics', component: Statistics, meta: { title: '数据统计', roles: ['ADMIN'] } }

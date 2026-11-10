@@ -70,6 +70,7 @@ const allMenus = [
   { path: '/books', title: '图书管理', icon: 'Collection', roles: ['ADMIN'] },
   { path: '/categories', title: '分类管理', icon: 'Menu', roles: ['ADMIN'] },
   { path: '/admin-users', title: '用户管理', icon: 'UserFilled', roles: ['ADMIN'] },
+  { path: '/admin-logs', title: '操作日志', icon: 'Document', roles: ['ADMIN'] },
   { path: '/borrow-manage', title: '借阅管理', icon: 'List', roles: ['ADMIN'] },
   { path: '/reservation-manage', title: '预约管理', icon: 'Finished', roles: ['ADMIN'] },
   { path: '/statistics', title: '数据统计', icon: 'DataAnalysis', roles: ['ADMIN'] }

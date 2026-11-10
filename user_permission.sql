@@ -20,12 +20,28 @@ DROP TABLE IF EXISTS `role`;
 
 -- ---------------------------------------------------------------
 -- 1. 用户表升级（在 database.sql 的 user 表基础上补充字段）
+--    幂等写法：仅当 email 列不存在时才执行 ALTER，重复 source 不会报错
+--    （MySQL 8.0 不支持 ADD COLUMN IF NOT EXISTS，故用 PREPARE 动态拼接）
 -- ---------------------------------------------------------------
-ALTER TABLE `user`
-    ADD COLUMN `email` VARCHAR(100) DEFAULT NULL COMMENT '邮箱' AFTER `nickname`,
-    ADD COLUMN `phone` VARCHAR(20) DEFAULT NULL COMMENT '手机号' AFTER `email`,
-    ADD COLUMN `status` TINYINT NOT NULL DEFAULT 1 COMMENT '账号状态：1-启用 0-停用' AFTER `role`,
-    ADD COLUMN `update_time` DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `create_time`;
+SET @need_upgrade := (
+    SELECT COUNT(*) = 0
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'user'
+      AND COLUMN_NAME = 'email'
+);
+SET @upgrade_sql := IF(
+    @need_upgrade,
+    'ALTER TABLE `user`
+        ADD COLUMN `email` VARCHAR(100) DEFAULT NULL COMMENT ''邮箱'' AFTER `nickname`,
+        ADD COLUMN `phone` VARCHAR(20) DEFAULT NULL COMMENT ''手机号'' AFTER `email`,
+        ADD COLUMN `status` TINYINT NOT NULL DEFAULT 1 COMMENT ''账号状态：1-启用 0-停用'' AFTER `role`,
+        ADD COLUMN `update_time` DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT ''更新时间'' AFTER `create_time`',
+    'SELECT 1'
+);
+PREPARE upgrade_stmt FROM @upgrade_sql;
+EXECUTE upgrade_stmt;
+DEALLOCATE PREPARE upgrade_stmt;
 
 -- ---------------------------------------------------------------
 -- 2. 角色表

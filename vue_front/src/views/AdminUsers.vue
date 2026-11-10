@@ -64,7 +64,7 @@
             v-if="row.role !== 'ADMIN'"
             :type="row.status === 1 ? 'danger' : 'success'"
             link
-            @click="handleToggleStatus(row)"
+            @click="openStatusDialog(row)"
           >
             {{ row.status === 1 ? '停用' : '启用' }}
           </el-button>
@@ -122,12 +122,42 @@
         <el-button type="primary" :loading="submitting" @click="handlePasswordSubmit">确定</el-button>
       </template>
     </el-dialog>
+
+    <!-- 启用/停用账号二次确认 -->
+    <el-dialog
+      v-model="statusVisible"
+      :title="statusAction === '停用' ? '停用账号确认' : '启用账号确认'"
+      width="440px"
+      destroy-on-close
+    >
+      <p class="dialog-tip">
+        即将{{ statusAction }}读者「{{ statusTarget.username }}」（{{ statusTarget.nickname || '未设置昵称' }}）的账号。
+      </p>
+      <el-alert
+        :type="statusAction === '停用' ? 'warning' : 'success'"
+        :closable="false"
+        show-icon
+        :title="statusAction === '停用'
+          ? '停用后该用户将无法登录系统，仍可随时重新启用。'
+          : '启用后该用户可正常登录系统。'"
+      />
+      <template #footer>
+        <el-button @click="statusVisible = false">取消</el-button>
+        <el-button
+          :type="statusAction === '停用' ? 'danger' : 'primary'"
+          :loading="submitting"
+          @click="handleToggleStatus"
+        >
+          {{ statusAction === '停用' ? '确认停用' : '确认启用' }}
+        </el-button>
+      </template>
+    </el-dialog>
   </el-card>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { Search, Refresh, UserFilled } from '@element-plus/icons-vue'
 import { getUsers, updateUserStatus, updateUserInfo, resetUserPassword } from '../api/user'
 import { formatDateTime } from '../utils/date'
@@ -149,6 +179,10 @@ const passwordVisible = ref(false)
 const passwordFormRef = ref(null)
 const passwordTarget = ref({})
 const passwordForm = reactive({ password: '', confirm: '' })
+
+const statusVisible = ref(false)
+const statusAction = ref('')
+const statusTarget = ref({})
 
 const editRules = {
   nickname: [{ max: 50, message: '昵称不能超过50字符', trigger: 'blur' }],
@@ -245,15 +279,20 @@ const handlePasswordSubmit = async () => {
   } finally { submitting.value = false }
 }
 
-const handleToggleStatus = (row) => {
-  const action = row.status === 1 ? '停用' : '启用'
-  ElMessageBox.confirm(`确定${action}读者「${row.username}」的账号吗？${row.status === 1 ? '停用后该用户将无法登录。' : ''}`, `${action}确认`, { type: 'warning' })
-    .then(async () => {
-      await updateUserStatus(row.id, row.status === 1 ? 0 : 1)
-      ElMessage.success(`账号已${action}`)
-      loadData()
-    })
-    .catch(() => {})
+const openStatusDialog = (row) => {
+  statusTarget.value = row
+  statusAction.value = row.status === 1 ? '停用' : '启用'
+  statusVisible.value = true
+}
+
+const handleToggleStatus = async () => {
+  submitting.value = true
+  try {
+    await updateUserStatus(statusTarget.value.id, statusTarget.value.status === 1 ? 0 : 1)
+    ElMessage.success(`账号已${statusAction.value}`)
+    statusVisible.value = false
+    loadData()
+  } finally { submitting.value = false }
 }
 
 onMounted(loadData)
