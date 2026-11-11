@@ -12,9 +12,9 @@ spring:
       max-file-size: 2MB
       max-request-size: 2MB
 
-# 头像等上传文件保存目录（相对应用工作目录）
+# 头像等上传文件保存目录（绝对路径：无论从哪个目录启动，读写与静态映射都指向同一处）
 app:
-  upload-dir: ./uploads/avatars
+  upload-dir: D:/code/Library-Management-System/springboot_back/uploads/avatars
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

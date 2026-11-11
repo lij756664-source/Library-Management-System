@@ -34,8 +34,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 头像等上传文件对外提供静态访问（无需登录）
+        // 映射前缀必须与目录层级一致：上传目录是 .../uploads/avatars，
+        // URL 是 /uploads/avatars/<文件名>，前缀用 /uploads/avatars/**
+        // 若用 /uploads/**，URL 里的 avatars 会被重复拼到目录后面（找不到文件返回 404）
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(uploadPath.toUri().toString());
+        String location = uploadPath.toUri().toString();
+        if (!location.endsWith("/")) {
+            location += "/";
+        }
+        registry.addResourceHandler("/uploads/avatars/**")
+                .addResourceLocations(location);
     }
 }

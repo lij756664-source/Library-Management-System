@@ -35,6 +35,7 @@ springboot_back/.vscode/
 
 # 头像上传目录（运行时生成）
 springboot_back/uploads/
+uploads/
 
 # 本机数据库连接配置
 springboot_back/src/main/resources/application-local.yml
